@@ -1,0 +1,23 @@
+.notify {
+    position: absolute;
+    font-size: 12px;
+    top: -10px;
+    left: 10px;
+    padding: 3px 6px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    font-family: monospace;
+}
+.bell-btn{
+    color: #6c757d;
+}
+.bell-btn i {
+    font-size: 30px;
+}
+.bell-btn::after {
+    display: none !important;
+}
+ul.header_nav_profile li {
+    margin: 0px 10px;
+}
