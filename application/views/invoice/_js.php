@@ -68,11 +68,15 @@ function addDetails(){
       $('#myModal').modal('hide');
     }
 }
-
+var services = {};
 $("#get-lead-detail").submit(function(e){
         e.preventDefault();
-        var data = $("#get-lead-detail").serializeArray();
-    
+         var invoice_detail = document.createElement("input");
+        invoice_detail.type = "hidden";
+        invoice_detail.value = JSON.stringify(services.cartlist());
+        invoice_detail.name = "invoice_detail";
+  $("#get-lead-detail").append(invoice_detail);
+       var data = $("#get-lead-detail").serializeArray(); 
         $.ajax({
       type: "POST",
        url: '<?=base_url()?>home/invoice_add_response',
@@ -82,13 +86,11 @@ $("#get-lead-detail").submit(function(e){
         var  path = 'path';
         var  reff = 'reff';
         console.log(response)
-       
         if(response == false){
-        
         }
         else{
       swal('Invoice Added',"Invoice Inserted",'success').then(function() {
-            window.location = "<?=base_url()?>invoice";
+          
             });
         }
       },
@@ -98,7 +100,152 @@ $("#get-lead-detail").submit(function(e){
     });
 
     });
- 
+  
+      services.cart = [];
+      services.Item = function (service_name,service,page,qty,turn,quality,subject,industry,writin_style,voice,inc_key,audience,gender,ref_link,inc_free_image,branded_generic,comments) {
+          this.service_name = service_name
+          this.service = service
+          this.page = page
+          this.qty = qty
+          this.turn = turn
+          this.quality = quality
+          this.subject = subject
+          this.industry = industry
+          this.writin_style = writin_style
+          this.voice = voice
+          this.inc_key = inc_key
+          this.audience = audience
+          this.gender = gender
+          this.ref_link = ref_link
+          this.inc_free_image = inc_free_image
+          this.branded_generic = branded_generic
+          this.comments = comments
+
+      };
+      // Add items too cart
+      services.addtocart = function (service_name,service,page,qty,turn,quality,subject,industry,writin_style,voice,inc_key,audience,gender,ref_link,inc_free_image,branded_generic,comments) {
+        if(service == '' ){
+          return 0;
+        }
+        
+          for (var i in this.cart) {
+              if (this.cart[i].service === service  ) {
+                  alert('This item already exist in list');
+                  return;
+              }
+               if (this.cart[i].service === "Select Service"  ) {
+                  return;
+              }
+          }
+          var item = new this.Item(service_name,service,page,qty,turn,quality,subject,industry,writin_style,voice,inc_key,audience,gender,ref_link,inc_free_image,branded_generic,comments);
+          this.cart.push(item);
+      };
+       services.cartlist = function () {
+          var cartcopy = [];
+          for (var i in this.cart) {
+              var item = this.cart[i];
+              var itemcopy = {};
+              for (var p in item) {
+                  itemcopy[p] = item[p]
+              }
+              cartcopy.push(itemcopy);
+          }
+          return cartcopy;
+      };
+
+       $(document).on("click",'.addToList',function(e){
+          e.preventDefault();
+         var  service_name = $("#service option:selected").text();
+         var  service = $("#service").val();
+         var  page  = $("#pages").val();
+         var  qty = $("#quantity").val();
+         var  turn = $("#turnaround").val();
+         var  quality = $("#quality").val();
+         var  subject = $("#subject").val();
+         var  industry = $("#industry").val();
+         var  writin_style = $("#preferred").val();
+         var  voice = $("#preferred_voice").val();
+         var  inc_key = $("#include_keyword").val();
+         var  audience = $("#target_audience").val();
+         var  gender = $("#target_gender").val();
+         var  ref_link = $("#refrence_link").val();
+         var  inc_free_image = $("#inc_free_image").val();
+         var  branded_generic = $("#branded_generic").val();
+         var  comments = $("#comments").val();
+services.addtocart(service_name,service,page,qty,turn,quality,subject,industry,writin_style,voice,inc_key,audience,gender,ref_link,inc_free_image,branded_generic,comments);
+      serviceDisplay();
+        });
+       function serviceDisplay(){
+          var cartarray = services.cartlist();
+          console.log(cartarray);
+          var input ="";
+          for (var i in cartarray) {
+            var com = (cartarray[i].comments == '')? 'No Comments' : cartarray[i].comments ;
+          input += `<tr>
+                    <td >`+ cartarray[i].service_name +`</td > 
+                    <td >`+ com +`</td >
+                    <td><a href="#" class="remitem" data-name=`+cartarray[i].service+` class="btn btn-danger btn-xs">x</a></td
+                    </tr>`;
+
+          }
+          $(".insertItems").html(input);
+          
+            if(input != ''){
+             
+              $("#saveBtn").attr("disabled",false);
+            }else{
+               
+               $("#saveBtn").attr("disabled",true);
+            }
+
+          }
+
+         services.removeitemfromcartall = function (service ) // remove all item from cart
+          {
+              for (var i in this.cart) {
+                  if (this.cart[i].service == service ) {
+                      this.cart.splice(i, 1);
+                      break;
+                  }
+              }
+          }
+
+        $('.table').on('click', '.remitem', function (e){
+           var index =  $('.remitem').index(this);
+
+           var name = $($('.remitem')[index]).data("name");
+             services.removeitemfromcartall(name);
+          serviceDisplay();
+        });
+        function get_check_val(){
+          $("tbody input[type='checkbox']:checked").each(function() {
+                var selector = $(this).closest('tr');
+                var name = selector.find('td:eq(2)').text();
+                var email =selector.find('td:eq(3)').text();
+                var number =selector.find('td:eq(4)').text();
+                var lead = $("#radioStacked4").val();
+                $("#lead_id").val(lead);
+                $("#name").val($.trim(name));
+                $("#email_val").val($.trim(email));
+                $("#number").val($.trim(number));
+                $(".close").click();
+              var valu = $("#email_val");
+              
+              if(valu.val() != ''){
+                $("#email_send").attr("disabled",false);
+              }else{
+                $("#email_send").attr("disabled",true);
+              }
+          })
+
+        }
+
+        $("#quantity").on('input',function(){
+          var valu = $(this).val()
+          if(valu <= 0){
+            $(this).val('')
+          }
+        })
 
 
 
