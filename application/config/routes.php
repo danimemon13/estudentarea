@@ -57,28 +57,52 @@ $route['login'] = 'home/login';
 $route['dashboard'] = 'home/dashboard';
 
 
-
-
 $route['department'] = 'home/department';
 $route['department/add'] = 'home/department_add';
+$route['department/edit/(:any)'] = 'home/department_edit/$1';
 
 
 
 $route['team'] = 'home/team';
 $route['team/add'] = 'home/team_add';
+$route['team/edit/(:any)'] = 'home/team_edit/$1';
 
 
 
 $route['role'] = 'home/role';
 $route['role/add'] = 'home/role_add';
+$route['role/edit/(:any)'] = 'home/role_edit/$1';
 
 
 
 $route['user'] = 'home/user';
 $route['user/add'] = 'home/user_add';
+$route['user/edit/(:any)'] = 'home/user_edit/$1';
+$route['user/team/(:any)'] = 'home/user_team/$1';
+$route['user/website/(:any)'] = 'home/user_website/$1';
+
+
+$route['leads'] = 'home/leads';
+$route['leads/add'] = 'home/leads_add';
+$route['leads/edit/(:any)'] = 'home/leads_edit/$1';
+
+
+
+$route['website'] = 'home/website';
+$route['website/add'] = 'home/website_add';
+$route['website/edit/(:any)'] = 'home/website_edit/$1';
+
+
+$route['invoice'] = 'home/invoice';
+$route['invoice/add'] = 'home/invoice_add';
+$route['invoice/edit/(:any)'] = 'home/invoice_edit/$1';
+
+
+
+$route['order'] = 'home/order';
+$route['order/add'] = 'home/order_add';
+$route['order/edit/(:any)'] = 'home/order_edit/$1';
 
 
 
 $route['logout'] = 'home/logout';
-
-

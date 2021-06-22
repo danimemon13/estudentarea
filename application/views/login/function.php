@@ -7,7 +7,11 @@
 	      data:form_data,
 	      dataType: 'JSON',
 	      url: "<?=base_url()?>home/login_user",
+		  beforeSend: function() {
+			$('#login_form button').html('Processing......');
+			},
 	      success:function(response){
+			$('#login_form button').html('Login');
 	          console.log(response);
 	          var len = response.length;
 	          for(var i=0; i<len; i++){
@@ -22,13 +26,16 @@
 						$(".alert").removeClass('alert-danger');
 						$(".alert").css("display", "block");
 						$(".alert").html('')
-						$(".alert").html("Setting up Please Wait......<img src='<?=base_url() ?>img/loader.gif' height='100' width='100'>")
+						$(".alert").html("<strong>Setting up Please Wait......</strong><img src='<?=base_url() ?>img/loader.gif'>")
 	                  setTimeout(function(){ 
 						window.location = "<?=base_url()?>dashboard";
 						}, 2000);	
 	              }
 	          }
-	      }
+	      },
+		  error:function(err){
+			  console.log(err);
+		  }
 	  });
  	});
  </script>

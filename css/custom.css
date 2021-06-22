@@ -21,3 +21,18 @@
 ul.header_nav_profile li {
     margin: 0px 10px;
 }
+.es-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase !important;
+    padding: .5rem !important;
+    text-align: center !important
+}
+.custom-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* .numberselected{
+    height: 300px !important;
+} */

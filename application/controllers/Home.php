@@ -1409,7 +1409,7 @@ class Home extends CI_Controller {
 		$count=0;     
 		foreach($query->result() as $r) {
 			$btn = '<div class="btn-group" data-toggle="buttons">';
-			$btn .= '<button id="'.$r->invoice_id.'" onclick="edit_website(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
+			$btn .= '<button id="'.$r->id.'" onclick="edit_order(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
 			$btn .='</div>';
 			
 			$get_service = $this->getDetilsById('id',$r->services,'ps_services');
@@ -1444,8 +1444,138 @@ class Home extends CI_Controller {
 		);
 		echo json_encode($result);
 	}
-	public function order_add()
-	{
+	public function order_action(){
+		$data['id'] = $_POST['id'];
+		$data['action'] = $_POST['action'];
+		// $data['status'] = $this->Home_models->selectrecords('ps_leads_status');
+		$this->load->view('order/tab',$data);
+	}
+	public function order_action_response(){
+		$action = $_POST['action'];
+		$lead_id = $_POST['id'];
+		$created_by = $_SESSION['user_profile'][0]['id'];
+		$user_name = $_SESSION['user_profile'][0]['first_name']."-".$_SESSION['user_profile'][0]['last_name'];
+		if($action == 'comments_add'){
+			$status = $_POST['status'];
+			$comments = htmlspecialchars($_POST["comments"],ENT_QUOTES);
+			$commments_form_array = array(
+				'lead_id' => $lead_id,
+				'user_id'=>$_SESSION['user_profile'][0]['id'],
+				'comments' => $comments,
+				'status' => $status
+			);
+			$lead_data = array(
+				'lead_status' => $status,
+				'created_by' => $_SESSION['user_profile'][0]['id']
+			);
+			
+			
+			$add_comments = $this->Home_models->saverecords('ps_leads_history',$commments_form_array);
+			if($add_comments>0){
+				$this->db->where('id', $lead_id);
+				$this->db->update('ps_leads', $lead_data);
+
+				echo "1";
+			}else{
+				echo "0";
+			}
+
+		}else if($action == 'reviewstatus'){
+			print_r($_POST);
+		
+		}else if($action == 'ownership'){
+			$status = '1';
+			$comments = htmlspecialchars($_POST["comments"],ENT_QUOTES);
+			$commments_form_array = array(
+				'lead_id'   =>$lead_id,
+				'user_id'   =>$created_by,
+				'comments'  =>$comments,
+				'message'   =>$user_name." Owned Lead Id is". $lead_id,
+				'file_path' =>'',
+				'status'=>'1',
+			);
+			$add_comments = $this->Home_models->saverecords('ps_leads_history',$commments_form_array);
+			if($add_comments>0){
+				echo "1";
+			}else{
+				echo "0";
+			}
+		}else if($action == 'ownchange'){
+			print_r($_POST);
+		}else if($action == 'reminder'){
+			print_r($_POST);
+		}else if($action == 'addchat'){
+			$comments = htmlspecialchars($_POST["comments"],ENT_QUOTES);
+			$lead_id_array = array('id'=>$lead_id);
+			$row_lead = $this->Home_models->selectrecords('ps_leads',$lead_id_array); 
+			$lead_code_filter = array('lead_id' => $lead_id, 'file_path!=' => '');
+			$this->db->select('count(*) as count');
+			$this->db->from("ps_leads_history");
+			$this->db->where($lead_code_filter);
+			$query = $this->db->get()->result();
+			$file_name = $query[0]->count;
+			$new_code = $row_lead[0]['lead_code'].'-'.$file_name;
+			$receipt_path = '';
+			if(!empty($_FILES)){
+				$config['upload_path'] = 'uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['file_name'] = $new_code;
+				$this->load->library('upload', $config);
+				$count = count($_FILES);
+				if($count == 1){
+					foreach ($_FILES as $f => $name){
+						if($this->upload->do_upload($f)){
+							$receipt_path = $config['upload_path']."".$config['file_name']."".$this->upload->data()['file_ext'];
+							// print_r($this->upload->data());
+							// echo "Your File Uploaded".$receipt_path;
+						}else{
+							print_r($this->upload->display_errors());
+						}
+					}
+				}
+				if($count > 1){
+					$zip = new ZipArchive(); 
+					$f1 = mt_rand(0,1);
+					$f2 = mt_rand(0,1);
+					// $receipt_path = "../uploads/$f1/".$new_code.".zip";
+					$receipt_path = "uploads/".$new_code.".zip";
+					if($zip->open($receipt_path, ZipArchive::CREATE) !== TRUE) {
+						$error .= "* Sorry ZIP creation failed at this time<br/>";
+					}
+					foreach($_FILES as $k => $value) {
+						
+						if($value == '') { // not empty field
+							continue;
+						}
+						$zip->addFromString($value['name'], file_get_contents($value['tmp_name']));
+					}
+					$zip->close();
+				}
+					$lead_history_table = array(
+						'lead_id'   =>$lead_id,
+						'user_id'   =>$created_by,
+						'comments'  =>$comments,
+						'message'   =>$user_name." Added Lead ". $lead_id,
+						'file_path' =>$receipt_path,
+						'status'=>'1',
+					);
+					$lead_history_add = $this->Home_models->saverecords('ps_leads_history',$lead_history_table);
+					if($lead_history_add > 0){
+						echo '1';
+					}else{
+						echo '0';
+					}
+				}
+				else{
+					
+				}	
+				
+
+		}else{
+			echo 'No Action Found';
+		}
+	}
+	public function order_add(){
 		$this->load->view('order/add');
 	}
 

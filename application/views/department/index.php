@@ -71,38 +71,36 @@
             </div>      
             <div class="col-xl-12 col-lg-12 col-md-12 col-md-12">        
               <div class="card shadow-sm border-0 mb-4 innr_pge_card mt-3">
-                <div class="card-header border-0 text-white pt-3 pb-3">
-                  <h5 class="text-uppercase font-weight-bold">Leads Table</h5>
+               <div class="card-header border-0 text-white pt-3 pb-3">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h5 class="text-uppercase font-weight-bold">Department Details</h5>
+                    </div>
+                    <div class="col-md-8"></div>
+                    <div class="col-md-1">
+                     <a type="button"  href="department/add" class="btn btn-primary btn-sm p-2">Add Depart</a>
+                    </div>
+                  </div>
+                  
+                  
                 </div>
+
+
                 <div class="card-body table-responsive">
-                  <table id="sale_dtl" class="table table-bordered table-striped">
+               
+                  <table id="data-table1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Team</th>
+                            <th>Department Name</th>
+                            <th>Team Name</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php 
-                        foreach($department as $departments){
-
-                        ?>
-                        <tr>
-                            <td><?=$departments['id']?></td>
-                            <td><?=$departments['name']?></td>
-                            <td><?=$departments['fk_team_id']?></td>
-                            <td>
-                              <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#leads_action"><span><i class="icofont-ui-edit"></i></span></button>
-                              <button class="btn btn-sm btn-danger"><span><i class="icofont-ui-delete"></i></span></button>
-                            </td>
-                        </tr>
-                        <?php
-                        }
-                        ?>
-                    </tbody>                                   
+                    </tbody>                               
                   </table>
+               
                 </div>
               </div>
             </div>

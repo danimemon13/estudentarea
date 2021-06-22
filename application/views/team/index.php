@@ -62,11 +62,11 @@
                 <div class="card-header border-0 text-white pt-3 pb-3">
                   <div class="row">
                     <div class="col-md-3">
-                      <h5 class="text-uppercase font-weight-bold">Leads Table</h5>
+                      <h5 class="text-uppercase font-weight-bold">Team Details</h5>
                     </div>
                     <div class="col-md-8"></div>
                     <div class="col-md-1">
-                      <button type="button" class="btn btn-primary btn-sm p-3">Add Team</button>
+                      <a type="button"  href="team/add" class="btn btn-primary btn-sm p-2">Add Team</a>
                     </div>
                   </div>
                   
@@ -77,27 +77,11 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
+                            <th>Team Name</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <?php 
-                        foreach($team as $teams){
-
-                        ?>
-                        <tr>
-                            <td><?=$teams['id']?></td>
-                            <td><?=$teams['name']?></td>
-                            <td>
-                              <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#leads_action"><span><i class="icofont-ui-edit"></i></span></button>
-                              <button class="btn btn-sm btn-danger"><span><i class="icofont-ui-delete"></i></span></button>
-                            </td>
-                        </tr>
-                        <?php
-                        }
-                        ?>
-                    </tbody>                                   
+                    <tbody></tbody>                               
                   </table>
                 </div>
               </div>

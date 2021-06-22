@@ -2,6 +2,11 @@
 	.alert-danger{
 		display: none;
 	}
+	.alert img {
+		width: 5%;
+		height: 23px;
+		float: right;
+	}
 </style>
 <body>
 <div class="login_bg w-100">

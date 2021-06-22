@@ -12,7 +12,7 @@
                   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="form-group">
                       <label>Team</label>
-                      <input type="text" name="name" class="form-control shadow-sm p-3" placeholder="Team">
+                      <input type="text" name="name" class="form-control shadow-sm p-3" placeholder="Team" required>
                     </div>
                   </div>
                 </div>          

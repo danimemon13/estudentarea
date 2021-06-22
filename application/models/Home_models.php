@@ -26,15 +26,68 @@ class Home_models extends CI_Model
         }
         
         $query = $this->db->get();
+
+        // if(isset($_SESSION['user_profile'])){
+        //     $username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+        //     $message = $username." is View Table".$table;
+        //     $this->Home->create_logs($table.' Area ',$message);
+        // }
+
+
         return $query->result_array();  
+
+
     }
-    function saverecords($table,$data)
-    {
+    function saverecords($table,$data){
         // print_r($data);
         // die();
         $this->db->insert($table,$data);
         return $this->db->insert_id();
-        
+    }
+    public function edit_function(){
+        $table = $_POST["table_name"];
+        $id = $_POST["user_id"];
+        $array = array();
+        foreach($_POST as $key=>$value){
+            if($key=='id'){}
+            else if($key=='table_name'){}
+            else{
+                $a=array($key=>$value);
+                array_push($array,$a);
+                $this->db->where('id', $id);
+                $this->db->update($table, $a);
+                
+            }
+        }
+        $return_arr[] = array("Type" => "Success","Error_type" => "confirm_password_error","msg"=>"Data Updated");
+		echo json_encode($return_arr);
+    }
+    public function update_team($editData, $id) {
+        $this->db->where('id', $id);
+
+        if ($this->db->update('ps_team', $editData)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function update_department($editData, $id) {
+        $this->db->where('id', $id);
+
+        if ($this->db->update('ps_department', $editData)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function update_role($editData, $id) {
+        $this->db->where('id', $id);
+
+        if ($this->db->update('ps_role', $editData)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 ?>

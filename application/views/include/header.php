@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="<?=base_url()?>css/style.css">
 	<link rel="stylesheet" href="<?=base_url()?>css/font-owesome.css">
 	<link rel="stylesheet" href="<?=base_url()?>css/custom.css">
-	
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" rel="stylesheet"/>
 	
 	<title>E-Student Area</title>
 </head>
