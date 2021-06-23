@@ -87,7 +87,7 @@
                       </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-md-12"></div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 ">
-                              <table >
+                              <table class="table table-striped">
                                 <thead id="multiChoose">
                                 <tr class="table table-secondary">
                                   <th>Service</th>        

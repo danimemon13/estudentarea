@@ -43,7 +43,7 @@ function get_lead(){
       return false;
     }
     $.ajax({
-            url: '<?=base_url()?>home/get_invoive_custumer_detail',
+            url: '<?=base_url()?>home/invoice_customer_details',
             type: 'POST',
             data: {'ID':lead_code},
             success: function(res) {
@@ -56,17 +56,36 @@ function get_lead(){
 }
 
 function addDetails(){
-  var radioid = $("#cus-id").val();
-  var radioname = $("#cus-name:checked").val();
-  var radioemail = $("#cus-email:checked").val();
-  var radionumber = $("#cus-number:checked").val();
-    if(radioid || radioname || radioemail || radionumber){
-      $('#c-id').val(radioid);
-      $('#c-name').val(radioname);
-      $('#c-email').val(radioemail);
-      $('#c-contact-no').val(radionumber);
-      $('#myModal').modal('hide');
-    }
+  
+  $("#custumer_dtl tbody input[type='checkbox']:checked").each(function() {
+        var selector = $(this).closest('tr');
+        var name = selector.find('td:eq(1)').text();
+        var email =selector.find('td:eq(2)').text();
+        var number =selector.find('td:eq(3)').text();
+        var lead = $("#cus-id").val();
+        // console.log(name)
+        // console.log(email)
+        // console.log(number)
+        // console.log(lead)
+        $("#c-id").val(lead);
+        $("#c-name").val($.trim(name));
+        $("#c-email").val($.trim(email));
+        $("#c-contact-no").val($.trim(number));
+        $(".close").click();
+        $('#myModal').modal('hide');
+  })
+
+  // var radioid = $("#cus-id").val();
+  // var radioname = $("#cus-name:checked").val();
+  // var radioemail = $("#cus-email:checked").val();
+  // var radionumber = $("#cus-number:checked").val();
+  //   if(radioid || radioname || radioemail || radionumber){
+  //     $('#c-id').val(radioid);
+  //     $('#c-name').val(radioname);
+  //     $('#c-email').val(radioemail);
+  //     $('#c-contact-no').val(radionumber);
+  //     $('#myModal').modal('hide');
+  //   }
 }
 var services = {};
 $("#get-lead-detail").submit(function(e){

@@ -256,12 +256,20 @@ if($action == 'edit'){
                     <div class="form-row">
                     <div class="form-group col-md-2"></div>
                     <div class="form-group col-md-8">
-                        <label for="lead_code" class="col-form-label">Select Sales Person </label>
+                        <label for="lead_code" class="col-form-label">Select User </label>
                         <select class="form-control" name="type">
                             <option>Select Option</option>
-                            
-                            <option value=""></option>
-                            
+                            <?php 
+                            $filter['team'] = $_SESSION['user_profile'][0]['team'];
+                            $filter['department'] = $_SESSION['user_profile'][0]['department'];
+                            $filter['role'] = '3';
+                            $get_users = $this->Home_models->selectrecords('ps_user_profile',$filter); 
+                            foreach($get_users as $getuser){
+                            ?>
+                            <option value="<?=$getuser['fk_parent_id']?>"><?=$getuser['first_name']." - ".$getuser['last_name']?></option>
+                            <?php   
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="form-group col-md-2"></div>
@@ -308,35 +316,30 @@ if($action == 'edit'){
                     action_res('Owner Status',data,'','');
                 });
          $("#owner-change-form").submit(function(e){
-                    e.preventDefault();
-                    var data = $("#owner-change-form").serializeArray();
-                    // console.log(data);
-                    action_res('Owner Change Status',data,'','');
+                e.preventDefault();
+                var data = $("#owner-change-form").serializeArray();
+                // console.log(data);
+                action_res('Owner Change Status',data,'','');
                 });
         $("#reminder-form").submit(function(e){
-                    e.preventDefault();
-                    var data = $("#reminder-form").serializeArray();
-                    // console.log(data);
-                    action_res('Reminder Form Status',data,'','');
-                });
-        $("#chat-form").submit(function(e){
-    
-                
                 e.preventDefault();
-                var data = $("#chat-form").serializeArray();    
-                var fd = new FormData();
-                var file_data = $('#file_r')[0].files
-                for (var i = 0; i < file_data.length; i++) {
-                    fd.append("file_" + i, file_data[i]);
-                }
-    
-                
-    
-                $.each(data,function(key,input){
-                    fd.append(input.name,input.value);
-                });
-                action_res_img('Add',fd,'','');
+                var data = $("#reminder-form").serializeArray();
+                // console.log(data);
+                action_res('Reminder Form Status',data,'','');
             });
+        $("#chat-form").submit(function(e){
+            e.preventDefault();
+            var data = $("#chat-form").serializeArray();    
+            var fd = new FormData();
+            var file_data = $('#file_r')[0].files
+            for (var i = 0; i < file_data.length; i++) {
+                fd.append("file_" + i, file_data[i]);
+            }
+            $.each(data,function(key,input){
+                fd.append(input.name,input.value);
+            });
+            action_res_img('Add',fd,'','');
+        });
          
 
         </script>

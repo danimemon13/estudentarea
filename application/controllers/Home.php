@@ -7,6 +7,7 @@ class Home extends CI_Controller {
         parent::__construct();
         $this->load->library('form_validation');    
 		$this->load->library('zip');    
+		$this->load->helper('pdf_helper');  
     }
 
     public function login(){
@@ -20,17 +21,11 @@ class Home extends CI_Controller {
     	$this->load->view('login/function');
     }
     public function login_user(){
-	
 		$username = $_POST['user_name'];
 		$password = md5($_POST['password']);
-		
 		$userArray = array('user_name' => $username, 'password' => $password);
-	
 		$data['login'] = $this->Home_models->selectrecords('ps_user_login',$userArray);
-		// echo $this->db->last_query();
-		// die();
 		$return_arr = array();
-
 		if(!empty($data['login'])){
 			//success
 			$return_arr[] = array("Type" => "Success","Error_type" => "login","msg"=>"User Is Available");
@@ -191,6 +186,22 @@ class Home extends CI_Controller {
         $data['data'] = $this->Home_models->selectrecords('ps_user_profile',$array);
         echo json_encode($data['data']);
 		// echo $this->db->last_query();
+    }
+	public function send_mail($from_email,$your_name,$to_email,$subject,$body){
+        $this->load->library('email');
+        $this->email->from($from_email, $your_name);
+        $this->email->to($to_email);
+        $this->email->subject($subject);
+        $this->email->message($body);
+
+        //Send mail 
+        if ($this->email->send()){
+            // $this->session->set_flashdata("email_sent", "Email sent successfully.");
+		}
+        else{
+            // $this->session->set_flashdata("email_sent", "Error in sending Email.");
+		}
+        // $this->load->view('email_form');
     }
 	
 	
@@ -635,8 +646,6 @@ class Home extends CI_Controller {
 			);
 		}else{
 			$allow_ip = !isset($_POST['allow_ip']) ? '0' : '1';
-			// echo $allow_ip;
-			// die();
 			$data = array(
 				'user_name' => $user_name,
 				'password' => md5($password),
@@ -654,7 +663,7 @@ class Home extends CI_Controller {
 				'role' => $role
 			);
 		}
-
+		
 		$this->db->where('id', $user_id);
 		$this->db->update('ps_user_login', $data);
 
@@ -1319,28 +1328,106 @@ class Home extends CI_Controller {
 				'status'=>"1",	
 					);
 			$addivoice = $this->Home_models->saverecords('ps_invoice_basic',$invArray);
-		if($addivoice >0){
-			$data = json_decode($_POST['invoice_detail']);    
-		    foreach ($data as $obj){
+			if($addivoice >0){
+				$data = json_decode($_POST['invoice_detail']);    
+				$pdf_content;
+				$count = 0;
+				foreach ($data as $obj){
 				   $service_id= $obj->service;
 				   $comment= $obj->comments;
 				   $Array = array(
-						 'invoice_id'=>$addivoice,
-						 'service_id'=>$service_id,
-						 'comments'=>$comment	
-					 );
-				      $add_invoice_detail = $this->Home_models->saverecords('ps_invoice_detail',$Array);
+						'invoice_id'=>$addivoice,
+						'service_id'=>$service_id,
+						'comments'=>$comment	
+					);
+				    $add_invoice_detail = $this->Home_models->saverecords('ps_invoice_detail',$Array);
+					$count++;
+					$get_service = $this->getDetilsById('id',$service_id,'ps_services');
+					$pdf_content .= '<tr>
+						<th> <b>Service '.$count.'</b></th>
+						<td>'.$get_service[0]['name'].'</td>
+					</tr>';
 				}
-			   }
-			$return_arr = array();
-		if($add_invoice_detail>0){
-				$return_arr[] = array("Type" => "Success","Error_type" => "Invoice","msg"=>"Data Success Fully Inserted");
-			}else{
-				$return_arr[] = array("Type" => "Error","Error_type" => "Invoice","msg"=>"Server Error");
 			}
-			echo json_encode($return_arr);
+				$return_arr = array();
+			if($add_invoice_detail>0){
+				$get_invoice_details = $this->getDetilsById('id',$addivoice,'ps_invoice_basic');
+				$inv = $get_invoice_details[0]['invoice_no'];
+				$lead_id = $get_invoice_details[0]['lead_id'];
+				$get_lead_details = $this->getDetilsById('lead_id',$lead_id,'ps_customers');
+				$name = $get_lead_details[0]['name'];
+				$email = $get_lead_details[0]['email'];
+				$number = $get_lead_details[0]['number'];
+				tcpdf();
+                $obj_pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+                $obj_pdf->SetCreator(PDF_CREATOR);
+                $title = "";
+                $obj_pdf->SetTitle($title);
+                // $obj_pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, $title);
+                $obj_pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+                $obj_pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+                $obj_pdf->SetDefaultMonospacedFont('helvetica');
+                $obj_pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+                $obj_pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+                $obj_pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+                $obj_pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+                $obj_pdf->SetFont('helvetica', '', 10);
+                $obj_pdf->setFontSubsetting(false);
+				$obj_pdf->AddPage();
+                ob_start();
+                    // we can have any view part here like HTML, PHP etc
+                ob_end_clean();
+				$message2 = '<!DOCTYPE html>
+								<html lang="en">
+								<head>
+									<title>Order Details</title>
+									<style>
+										table{
+											background:red !important;
+										}
+									</style>
+								</head>
+								<body>
+									<h4 style="text-align: center;background-color: #a7a7a7;color: black;padding: 4px;">Invoice DETAILS </h4>
+									<div class="height:200px"></div>	
+									<h5 style="text-align: center;background-color: black;padding: 4px;color: white;">INVOICE NO = " '.$inv.'  "</h5>
+										<div class="height:200px"></div>
+										<table style="text-align: center;border:1px;color: black;padding: 4px;">
+										<thead>
+										<tr>
+											<th><b>Name</b></th>
+											<th><b>Email</b></th>
+											<th><b>Phone</b></th>
+										</tr>
+										</thead>
+										<tbody>
+										<tr>
+											<td>'.$name.'</td>
+											<td>'.$email.'</td>
+											<td>'.$number.'</td>
+										</tr>
+										</tbody>
+									</table>
+									<table style="text-align: center;border:1px;color: black;padding: 4px;font-size:12px !important;">
+									'.$pdf_content.'
+									</table>
+								</body>
+							</html>
+							';
+                $title2 = "Journey2oftest";
+                $title2 = str_replace(".com ","",$title2);
+                $obj_pdf->writeHTML($message2, true, false, true, false, '');
+                $obj_pdf->AddPage();
+                $url = 'C:/xampp/htdocs/estudentarea/dynamic/uploads/invoice/'.$inv.'.pdf';
+                
+                $obj_pdf->Output($url, 'F');
+			$return_arr[] = array("Type" => "Success","Error_type" => "Invoice","msg"=>"Data Success Fully Inserted");
+		}else{
+			$return_arr[] = array("Type" => "Error","Error_type" => "Invoice","msg"=>"Server Error");
+		}
+		echo json_encode($return_arr);
 	}
-	public function get_invoive_custumer_detail(){
+	public function invoice_customer_details(){
 		$lead_code = $_POST["ID"];
 		$array = array('lead_code'=> $lead_code);
         $get_lead_details = $this->Home_models->selectrecords('ps_leads',$array);
@@ -1366,7 +1453,7 @@ class Home extends CI_Controller {
 						</th>
 					</tr>
 					<tr>
-						<th>#</th>
+						<th>.</th>
 						<th>Name</th>
 						<th>Email</th>
 						<th>Number</th>
@@ -1374,19 +1461,19 @@ class Home extends CI_Controller {
 				</thead>
 				<tbody>
 					<tr>
+						<td>
+							<input type="checkbox">
+						</td>
+						<td>
+							<label>'.$data['customer_name'].'</label>
+						</td>
+						<td>
+							<label>'.$data['customer_email'].'</label>
+						</td>
+						<td>
+							<label>'.$data['customer_no'].'</label>
+						</td>
 						<input type="hidden" name="id"  id="cus-id" value='.$data['lead_id'].'>
-						<td>
-							<input type="radio" name="name"  id="cus-name" value='.$data['customer_name'].'>   
-							<label for="cus-name">'.$data['customer_name'].'</label>
-						</td>
-						<td>
-							<input type="radio" name="email"  id="cus-email" value='.$data['customer_email'].'>   
-							<label for="cus-name">'.$data['customer_email'].'</label>
-						</td>
-						<td>
-							<input type="radio" name="number"  id="cus-number" value='.$data['customer_no'].'>
-							<label for="cus-name">'.$data['customer_no'].'</label>
-						</td>
 					</tr>
 				</tbody>
 			</table>';
@@ -1463,7 +1550,6 @@ class Home extends CI_Controller {
 		$this->load->view('order/tab',$data);
 	}
 	public function order_action_response(){
-		
 	}
 	public function order_add(){
 		$this->load->view('order/add');
