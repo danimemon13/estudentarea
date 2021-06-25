@@ -1,0 +1,125 @@
+/*---primary: #11A1FD;  primary dark: #085DB6;  light:#4CC3FD;---*/
+*{ margin: 0; padding: 0; outline: none !important; }
+body{ font-family: 'Open Sans', sans-serif; font-size: 14px; }
+h1,h2,h3,h4,h5,h6,p,ul{ margin: 0; padding: 0; }
+button:focus{ box-shadow: none !important; }
+::-webkit-scrollbar { width: 2px; height: 3px; }
+::-webkit-scrollbar-track { background: #fff; }
+::-webkit-scrollbar-thumb { background: #085DB6; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+.form-control{ height: auto !important; font-size: 14px;}
+.modal-header{color: #fff; border-radius: 15px 15px 0 0; }
+.modal_btn{ background: linear-gradient(to top, #11A1FD,#4CC3FD); color: #fff; transition: .3s;border-radius: 4px;  }
+.modal_btn:hover{ background: linear-gradient(to top, #4CC3FD,#11A1FD); color: #fff; }
+.modal_btn_dark{ background: linear-gradient( to top, #615F5F, #888); color: #fff; transition: .3s;border-radius: 4px; }
+.modal_btn_dark:hover{ background: linear-gradient( to top, #888, #615F5F); color: #fff; }
+.login_left{ background: #ffff; padding: 220px 60px 0 60px; height: 100vh; }
+.login_right{ height: 100vh; background: url(../img/login_bg.jpg) no-repeat center; background-size: cover;  }
+.login_form .input-group,.forget_pass .input-group{ border-radius: 10px; }
+.login_form .input-group .input-group-text,.forget_pass .input-group .input-group-text{ color: #11A1FD; }
+.forget_pass .form-control{ font-size: 14px; }
+.login_right p{position: absolute; right: 20px; bottom: 15px;display: inline-block; }
+.modal-content,.login_form .input-group{ background: #f1f1f1; }
+.shadow-sm{ box-shadow: 0 0.15rem 1.75rem 0 rgba(31, 45, 65, 0.15) !important; }
+
+
+select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, gray 50%),
+    linear-gradient(135deg, gray 50%, transparent 50%),
+    linear-gradient(to right, #ccc, #ccc);
+  background-position:
+    calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px),
+    calc(100% - 2.5em) 0.5em;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1px 1.5em;
+  background-repeat: no-repeat;
+  appearance:none;
+}
+
+select:focus {
+  background-image:
+    linear-gradient(45deg, green 50%, transparent 50%),
+    linear-gradient(135deg, transparent 50%, green 50%),
+    linear-gradient(to right, #ccc, #ccc);
+  background-position:
+    calc(100% - 15px) 1em,
+    calc(100% - 20px) 1em,
+    calc(100% - 2.5em) 0.5em;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1px 1.5em;
+  background-repeat: no-repeat;
+  border-color: green;
+  outline: 0;
+}
+
+/*********************************login page close*********************************/
+
+.innr_pge_card{ background: #f9f9f9; }
+.nav-link{ color:#000 !important; }
+.logo img{ height: 40px; }
+.sidebar_nav {background: #fff; position: fixed; left: 0; height: 100vh; top: 62px; overflow-y: auto; } 
+.sidebar_nav ul li{list-style: none; } 
+.sidebar_nav ul li a{display: block; padding: 10px 20px; transition: linear .3s; } 
+.sidebar_nav ul li a:hover{background: #eff3f9; color: #333; } 
+.sidebar_nav ul li a>span{ transition: .3s; } 
+.sidebar_link{display: none; opacity: 0; } 
+.sidebar_link_show{display: inline-block; opacity: 1; }
+.sidebar-submenu a{ background: #eff3f9; } 
+.submenu-icon::after {content: " \eab8"; font-family: icofont; display: inline; text-align: right; padding-left: 10px; transition: linear .3s; } 
+.list-group .list-group-item[aria-expanded="true"] 
+.submenu-icon::after {content: " \eab9"; font-family: icofont; display: inline; text-align: right; padding-left: 10px; } 
+.main_content{background: #eff3f9; padding:75px 0 30px 74px; overflow: hidden; }
+
+/************************************main content area************************************/
+
+.earning_box,.card, .modal-content,.lds_pymnts_bx,.ttle_pges,.table_filtr{ border-radius: 15px; } 
+.dash_head_tabs .nav-tabs .nav-link { border: none; text-transform: uppercase;  font-weight: 600; letter-spacing: 1px; }
+.dash_head_tabs .nav-tabs .nav-link,.lds_pymnts_bx h4,.mrchnt_tble td{ font-size: 16px; }
+.dash_head_tabs .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{ border-bottom: 3px solid #0c7dd9; background: transparent; }
+.earning_text p{ font-size: 13px; } 
+.earning_icon span {width: 70px; height: 70px; display: inline-block; padding: 9px 0; font-size: 32px; } 
+.earning_box .icon1{ background: #11a1fd30; color: #11A1FD; } 
+.earning_box .icon2{ background: #6774DF30; color: #6774DF; } 
+.earning_box .icon3{ background: #F5A40330; color: #F5A403; }
+.card-header{ border-radius: 15px 15px 0 0 !important; background: linear-gradient(90deg, #0c7dd9, #4CC3FD); }
+.mrchnt_tble th{ font-weight: normal; }
+.stats span{font-size: 42px; }
+.stats .icon1{ color: #4CC3FD; }
+.stats .icon2{ color: #F5A403; }
+.stats .icon3{ color: #6774DF; }
+.stats .icon4{ color: #4CFD93; }
+.stats .icon5{ color: #03D4F5; }
+.stats .icon6{ color: #F3A74F; }
+.ttl_bx1,.modal-header{ background: linear-gradient(to right, #11A1FD, #87D4F9); }
+.ttl_bx2{ background: linear-gradient(to right, #EC9B3B, #F7BE16); }
+.ttl_bx3{ background: linear-gradient(to right, #A486DB, #D89CF6); }
+.ttl_bx4{ background: linear-gradient(to right, #2ECC7C, #97F982); }
+.ttl_bx5{ background: linear-gradient(to right, #ED6663, #FFA372); }
+.ttl_bx p{ font-size: 22px; }
+.lds_pymnts_bx{ overflow: hidden; }
+.lds_pymnts_bx h4{ font-weight: bold; }
+.lds_pymnts tr th{ font-size: 12px; }
+.lds_pymnts tr th:last-child{ background: #4CC3FD; color: #fff; }
+.table_filtr{ background: #f9f9f9; }
+.prfle_stts span{ font-size: 32px; }
+
+@media screen and (max-width:980px){
+	.login_left{ padding:150px 60px 0 60px; }
+}
+@media screen and (max-width:767px){
+	.login_left{ padding:50px 15px 0 15px; }
+	.login_right{ display: none; }
+	.sidebar_nav{ top: 109px; left:-80px; transition: .3s; }
+	.sidebar_collapse {left: 0; }
+	.main_content{ padding: 98px 0 30px 0; }
+	ul.header_nav_list{ display: flex; justify-content: space-between; }
+	.header_nav_profile .dropdown-toggle{ width: 100%; display: flex; justify-content: space-between; align-items: center; margin: 10px 0 0; }
+	ul.header_nav_list li, ul.header_nav_profile li{ display: block; }
+	.dropdown-menu{ width: 100%; }
+}
