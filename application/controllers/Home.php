@@ -219,6 +219,7 @@ class Home extends CI_Controller {
 	      $length = intval($this->input->get("length"));
 		  $this->db->select("ps_department.id ,ps_team.name,ps_department.name as depart");
 	      $this->db->from("ps_team");
+	      $this->db->where('ps_department.status !=' ,"0");
 		  $this->db->join('ps_department', 'ps_team.id = ps_department.fk_team_id');
 	      $this->db->order_by("ps_department.id","desc"); 
 	      $query = $this->db->get();
@@ -230,8 +231,8 @@ class Home extends CI_Controller {
       		$btn  = '<a href="'.base_url().'department/edit/'.$r->id.'" class="btn btn-warning btn-icon">';
       		$btn .= '<i class="fa fa-eye"></i>';
       		$btn .= '</a>';
-      		$btn  .= '<button onClick="delete_func(this.id,\'team\')" id="'.$r->id.'" class="btn btn-danger btn-icon">';
-      		$btn .= '<i class="fa fa-trash"></i>';
+      		$btn  .= '<button onClick="deleted(this.id)" id="'.$r->id.'" class="btn btn-danger btn-icon">';
+			$btn .= '<i class="fa fa-trash"></i>';
       		$btn .= '</button>';
             $data[] = array(
                 ++$count,
@@ -284,7 +285,7 @@ class Home extends CI_Controller {
 		$id= $this->input->post('id');
 		$editData['name'] = $this->input->post('name');
 		$editData['fk_team_id'] = $this->input->post('fk_team_id');
-		$update = $this->Home_models->update_department($editData, $id);
+		$update = $this->Home_models->update_globl('ps_department',$id,$editData);
 		$return_arr = array();
 		if($update>0){
 			$return_arr[] = array("Type" => "Success","Error_type" => "Department","msg"=>"Data Success Fully Updated");
@@ -293,8 +294,6 @@ class Home extends CI_Controller {
 		}
 		echo json_encode($return_arr);
     }
-
-
 
 	/************** Team ******************/
 	public function team(){
@@ -310,6 +309,7 @@ class Home extends CI_Controller {
       $length = intval($this->input->get("length"));
       $this->db->select("*");
       $this->db->from("ps_team");
+      $this->db->where('ps_team.status !=' ,"0");
       $this->db->order_by("id","desc"); 
       $query = $this->db->get();
       
@@ -320,7 +320,7 @@ class Home extends CI_Controller {
 			$btn  = '<a href="'.base_url().'team/edit/'.$r->id.'" class="btn btn-warning btn-icon">';
 			$btn .= '<i class="fa fa-eye"></i>';
 			$btn .= '</a>';
-			$btn  .= '<button onClick="delete_func(this.id,\'team\')" id="'.$r->id.'" class="btn btn-danger btn-icon">';
+			$btn  .= '<button onClick="deleted(this.id)" id="'.$r->id.'" class="btn btn-danger btn-icon">';
 			$btn .= '<i class="fa fa-trash"></i>';
 			$btn .= '</button>';
            $data[] = array(
@@ -368,7 +368,7 @@ class Home extends CI_Controller {
 	public function team_edit_response() {
 		$id = $this->input->post('id');
 		$editData['name'] = $this->input-> post('name');
-		$update = $this->Home_models->update_team($editData, $id);
+		$update = $this->Home_models->update_globl('ps_team',$id,$editData);
 		$return_arr = array();
 		if ($update > 0) {
 			$return_arr[] = array("Type" => "Success", "Error_type" => "Team", "msg" => "Data Success Fully Updated");
@@ -391,6 +391,7 @@ class Home extends CI_Controller {
       $length 	= intval($this->input->get("length"));
       $this->db->select("ps_role.id,ps_role.name,ps_department.name as depart");
       $this->db->from("ps_role");
+      $this->db->where('ps_role.status !=' ,"0");
 	  $this->db->join('ps_department', 'ps_role.depart_id = ps_department.id');
       $this->db->order_by("ps_role.id","desc");
       $query = $this->db->get();
@@ -401,8 +402,8 @@ class Home extends CI_Controller {
       		$btn  = '<a href="'.base_url().'role/edit/'.$r->id.'" class="btn btn-warning btn-icon">';
       		$btn .= '<i class="fa fa-eye"></i>';
       		$btn .= '</a>';
-      		$btn  .= '<button onClick="delete_func(this.id,\'role\')" id="'.$r->id.'" class="btn btn-danger btn-icon">';
-      		$btn .= '<i class="fa fa-trash"></i>';
+      		$btn  .= '<button onClick="deleted(this.id)" id="'.$r->id.'" class="btn btn-danger btn-icon">';
+			$btn .= '<i class="fa fa-trash"></i>';
       		$btn .= '</button>';
            $data[] = array(
                 ++$count,
@@ -459,7 +460,7 @@ class Home extends CI_Controller {
 		$id= $this->input->post('id');
 		$editData['name'] = $this->input->post('name');
 		$editData['depart_id'] = $this->input->post('depart_id');
-		$update = $this->Home_models->update_role($editData, $id);
+		$update = $this->Home_models->update_globl('ps_role',$id,$editData);
 		$return_arr = array();
 		if($update>0){
 			$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
@@ -487,14 +488,24 @@ class Home extends CI_Controller {
 						   ps_user_profile.first_name_real as first_name_real,
 						   ps_user_profile.last_name_real as last_name_real,
 						   ps_user_profile.role,
+						   ps_user_login.status,
 						   ps_team.name as user_team, 
 						   ps_role.name as user_role, 
-						   ps_department.name as user_department
+						   ps_department.name as user_department,
+						   managers.first_name_real as first_name_real_manager,
+						   managers.last_name_real as last_name_real_manager,
+						   team_leads.first_name_real as first_name_real_team_lead,
+						   team_leads.last_name_real as last_name_real_team_lead,
+
 			");
 		$this->db->from("ps_user_profile");
+		$this->db->where('ps_user_login.status !=' ,"0");
+		$this->db->join('ps_user_login', 'ps_user_profile.id = ps_user_login.id');
 		$this->db->join('ps_team', 'ps_user_profile.team = ps_team.id','left');
 		$this->db->join('ps_role', 'ps_user_profile.role = ps_role.id','left');
 		$this->db->join('ps_department', 'ps_user_profile.department = ps_department.id','left');
+		$this->db->join('ps_user_profile as managers', 'ps_user_profile.manager = managers.fk_parent_id','left');
+		$this->db->join('ps_user_profile as team_leads', 'ps_user_profile.team_lead = team_leads.fk_parent_id','left');
 		$this->db->order_by("ps_user_profile.id","desc"); 
 		$query = $this->db->get();
 		$data = [];
@@ -509,13 +520,18 @@ class Home extends CI_Controller {
       		$btn .= '<i class="fa fa-globe"></i>';
       		$btn .= '</a>';
 			if($r->role == '1' || $r->role == '2'){
-				$btn  .= '<a href="'.base_url().'user/team/'.$r->id.'" class="btn btn-danger btn-icon">';
+				$btn  .= '<a href="'.base_url().'user/team/'.$r->id.'" class="btn btn-success btn-icon">';
 				$btn .= '<i class="fa fa-plus"></i>';
 				$btn .= '</a>';
 			}
+			$btn  .= '<button onClick="deleted(this.id)" id="'.$r->id.'" class="btn btn-danger btn-icon">';
+			$btn .= '<i class="fa fa-trash"></i>';
+      		$btn .= '</a>';
 			$btn .= '<div>';
 			$username_s =  $r->first_name."-".$r->last_name;
 			$username_r =  $r->first_name_real."-".$r->last_name_real;
+			$manger =  $r->first_name_real_manager."-".$r->last_name_real_manager;
+			$team_lead =  $r->first_name_real_team_lead."-".$r->last_name_real_team_lead;
 			$data[] = array(
                 ++$count,
                 $username_r,
@@ -525,6 +541,8 @@ class Home extends CI_Controller {
                 $r->user_department,
                 $r->employee_id,
                 $r->extension,
+                $team_lead,
+                $manger,
                 $btn
            );
       }
@@ -561,6 +579,7 @@ class Home extends CI_Controller {
 			$userArray1 = array('user_name'=>$_POST['user_name'],'password'=>md5($_POST['password']),'ip_allow'=>"$allow_ip");
 			$adduser1 = $this->Home_models->saverecords('ps_user_login',$userArray1);
 			if($adduser1 > 0){
+				$executive = 0;
 				// if($_POST['role'] == 3){
 				// 	$executive = $adduser1;
 				// }else{
@@ -580,8 +599,6 @@ class Home extends CI_Controller {
 					'added_by'		 => '2',
 					'manager'		 => $manager,
 					'team_lead'		 => $team_lead,
-					'executive'		 => $executive,
-					'refund'		 => '0',
 				);
 				$adduser2 = $this->Home_models->saverecords('ps_user_profile',$userArray2);
 				// echo $this->db->last_query();
@@ -624,7 +641,6 @@ class Home extends CI_Controller {
 		$department 		= $_POST['department'];
 		$role 				= $_POST['role'];
 		$user_id 			= $_POST['user_id'];
-
 		if($password == ''){
 			$allow_ip = !isset($_POST['allow_ip']) ? '0' : '1';
 			// echo $allow_ip;
@@ -663,7 +679,17 @@ class Home extends CI_Controller {
 				'role' => $role
 			);
 		}
-		
+		if($role == '1'){
+				$data1['manager'] = '0';
+		}
+		if($role == '2'){
+			$data1['team_lead'] = '0';
+			$data1['manager'] = $_POST['manager'];
+		}
+		if($role == '3'){
+			$data1['team_lead'] = $_POST['team_leads'];
+			$data1['manager'] = $_POST['manager'];
+		}
 		$this->db->where('id', $user_id);
 		$this->db->update('ps_user_login', $data);
 
@@ -680,10 +706,15 @@ class Home extends CI_Controller {
 		$this->load->template('user/team',$data);
 		$this->load->view('user/_js');
 	}
-	public function user_team_response(){     
+	public function user_team_response(){
 		$action = $_POST['action'];
+		$team_lead_id = $_POST['team_lead_id'];
+		
+		$get_current_team_lead_manger['fk_parent_id'] = $team_lead_id;
+		$get_manager = $this->Home_models->selectrecords('ps_user_profile',$get_current_team_lead_manger);
+		$manager_id = $get_manager[0]['manager'];
 		if($action == 'update_team_lead'){
-			$update_array = array('team_lead'=>$_POST['team_lead_id']);
+			$update_array = array('team_lead'=>$team_lead_id,'manager'=>$manager_id);
 		}else if($action == 'update_manager'){
 			$update_array = array('manager'=>$_POST['team_lead_id']);
 		}
@@ -797,6 +828,7 @@ class Home extends CI_Controller {
 		pls.status_btn as status_btn,
 		");
 		$this->db->from("ps_leads as pl");
+		$this->db->where('pl.display_id !=' ,"0");
 		$this->db->join('ps_customers as pc', 'pl.id = pc.lead_id');
 		$this->db->join('ps_team as pt', 'pl.team_id = pt.id');
 		$this->db->join('ps_user_profile as pup', 'pup.fk_parent_id = pl.created_by','left');
@@ -811,7 +843,10 @@ class Home extends CI_Controller {
 		$btn = '<div class="btn-group" data-toggle="buttons">';
 		$btn .= '<button id="'.$r->lead_id.'" onclick="edit_leads(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
 		$btn .= '<button id="'.$r->lead_id.'" onclick="view(this.id)" class="btn btn-warning btn-sm"><i class="fa fa-eye"></i></button>';
-		$btn .= '<button id="'.$r->lead_id.'" onclick="deleted(this.id)" class="btn btn-danger btn-sm"><i class="fas fa-history"></i></button>';
+		$btn .= '<button id="'.$r->lead_id.'" onclick="history(this.id)" class="btn btn-success btn-sm"><i class="fas fa-history"></i></button>';
+		$btn  .= '<button onClick="deleted(this.id)" id="'.$r->lead_id.'" class="btn btn-danger btn-icon">';
+			$btn .= '<i class="fa fa-trash"></i>';
+			$btn .= '</button>';
 		$btn .='</div>';
 		
 		$btn_lead = '<button onclick="copyToClipboard(this.id)" id="'.$r->lead_code.'" class="btn btn-primary btn-sm">'.$r->lead_code.'</button>';
@@ -875,9 +910,7 @@ class Home extends CI_Controller {
 		$customer_name = $_POST['customer_name'];
 		$customer_email = $_POST['customer_email'];
 		$customer_phone = $_POST['customer_phone'];
-		
 
-		
 			$lead_main_table = array(
 				'lead_code'=>$new_lead_code,
 				'created_at'=>$time,
@@ -1088,6 +1121,7 @@ class Home extends CI_Controller {
 		
 		");
 		$this->db->from("ps_website as pw");
+		$this->db->where('pw.display_id !=' ,"0");
 		$this->db->join('ps_team as pt', 'pw.team = pt.id','left');
 		$this->db->join('ps_user_profile as pup', 'pup.fk_parent_id = pw.created_by','left');
 		$this->db->order_by("pw.id","desc"); 
@@ -1097,6 +1131,8 @@ class Home extends CI_Controller {
       foreach($query->result() as $r) {
 		$btn = '<div class="btn-group" data-toggle="buttons">';
 		$btn .= '<button id="'.$r->website_id.'" onclick="edit_website(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
+		$btn  .= '<button onClick="deleted(this.id)" id="'.$r->website_id.'" class="btn btn-danger btn-icon">';
+			$btn .= '<i class="fa fa-trash"></i>';
 		$btn .='</div>';
 
 		$badge = $r->status == 1 ? 'badge-success' : 'badge-danger';
@@ -1256,6 +1292,7 @@ class Home extends CI_Controller {
 		pup.last_name
 		");
 		$this->db->from("ps_invoice_basic as inv");
+		 $this->db->where('inv.display_id !=' ,"0");
 		$this->db->join('ps_leads as ld', 'ld.id= inv.lead_id');
 		$this->db->join('ps_team as pt', 'pt.id = inv.team');
 		$this->db->join('ps_user_profile as pup', 'pup.id  = inv.added_by');
@@ -1266,7 +1303,10 @@ class Home extends CI_Controller {
 		foreach($query->result() as $r) {
 			$btn = '<div class="btn-group" data-toggle="buttons">';
 			$btn .= '<button id="'.$r->invoice_id.'" onclick="edit_website(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
+			$btn .= '<button id="'.$r->invoice_id.'" onClick="deleted(this.id)" class="btn btn-danger btn-icon"><i class="fa fa-trash"></i></button>';
 			$btn .='</div>';
+
+			
 			
 			$badge = $r->status == 1 ? 'badge-success' : 'badge-danger';
 			
@@ -1494,11 +1534,15 @@ class Home extends CI_Controller {
 		
 		$this->db->select("
 		orc.* , 
-		ord.invoice_id as invoice_id
+		ord.invoice_id as invoice_id,
+		pors.name as p_status,
+		pors.status_btn as p_status_btn
 		");
 		
 		$this->db->from("ps_order_main as ord");
+		 $this->db->where('ord.display_id !=' ,"0");
 		$this->db->join('ps_order_child as orc', 'orc.order_id = ord.id');
+		$this->db->join('ps_order_production_status as pors', 'orc.production_status = pors.id');
 		
 		// $this->db->where('orc.display', '1');
 		$query = $this->db->get();
@@ -1509,6 +1553,8 @@ class Home extends CI_Controller {
 		foreach($query->result() as $r) {
 			$btn = '<div class="btn-group" data-toggle="buttons">';
 			$btn .= '<button id="'.$r->id.'" onclick="edit_order(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
+			$btn .= '<button id="'.$r->id.'" onclick="history(this.id)" class="btn btn-warning btn-sm"><i class="fas fa-history"></i></button>';
+			$btn .= '<button id="'.$r->id.'" onClick="deleted(this.id)" class="btn btn-danger btn-icon"><i class="fa fa-trash"></i></button>';
 			$btn .='</div>';
 			
 			$get_service = $this->getDetilsById('id',$r->services,'ps_services');
@@ -1520,6 +1566,8 @@ class Home extends CI_Controller {
 			$get_inv = $this->getDetilsById('id',$r->invoice_id,'ps_invoice_basic');
 			$invoice_no = $get_inv[0]['invoice_no'];
 			
+			$production_status = '<span class="badge '.$r->p_status_btn.' es-label">'.$r->p_status.'</span>';
+
 			$oi = $r->order_code.' / '.$invoice_no;
 			$data[] = array(
 				++$count,
@@ -1529,7 +1577,7 @@ class Home extends CI_Controller {
 				$r->sale_date,
 				$r->delivery_date,
 				$service,
-				$r->production_status,
+				$production_status,
 				$r->support_status,
 				$assign_user,
 				$btn,
@@ -1546,14 +1594,183 @@ class Home extends CI_Controller {
 	public function order_action(){
 		$data['id'] = $_POST['id'];
 		$data['action'] = $_POST['action'];
-		// $data['status'] = $this->Home_models->selectrecords('ps_leads_status');
 		$this->load->view('order/tab',$data);
 	}
 	public function order_action_response(){
+		$action = $_POST['action'];
+		$id = $_POST['id'];
+		if($action == 'assigned_order'){
+			$id= $this->input->post('id');
+			$writer_id= $this->input->post('writer_name');
+			$comments= $this->input->post('comments');
+			$assign_by=$_SESSION['user_profile'][0]['id'];
+			$Array = array(
+					'assign_to'=>$writer_id,
+					'assign_by'=>$assign_by,
+					'production_status'=>"2"
+				);
+			$Array1 = array(
+					'order_id'=>$id,
+					'comment'=>$comments,
+					'added_by'=>$assign_by
+				);
+	        $this->db->where('id', $id);
+			$update_order_child= $this->db->update('ps_order_child', $Array);
+			$return_arr = array();
+			if($update_order_child>0) {
+			$add_order_history = $this->Home_models->saverecords('ps_order_history',$Array1);
+				if($add_order_history>0){
+					$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
+				}else{
+					$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
+				}
+			}
+			echo json_encode($return_arr);
+		}else if($action == 'comment_order'){
+			$filter['id']= $id;
+			$row_order_history = $this->Home_models->selectrecords('ps_order_child',$filter);
+			$writer_id= $this->input->post('writer_name');
+			$comments= $this->input->post('comments');
+			$assign_by=$_SESSION['user_profile'][0]['id'];
+			$lead_code_filter = array('order_id	' => $id, 'files!=' => '');
+			$this->db->select('count(*) as count');
+			$this->db->from("ps_order_history");
+			$this->db->where($lead_code_filter);
+			$query = $this->db->get()->result();
+			$history_count = $query[0]->count;
+			$file_name  = $history_count == 0 ? 1 : $history_count +1 ;
+			$new_code = $row_order_history[0]['view_code'].'-'.$file_name;
+			$receipt_path = '';
+			if(!empty($_FILES)){
+				$config['upload_path'] = 'uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['file_name'] = $new_code;
+				$this->load->library('upload', $config);
+				$count = count($_FILES);
+				if($count == 1){
+					foreach ($_FILES as $f => $name){
+						if($this->upload->do_upload($f)){
+							$receipt_path = $config['upload_path']."".$config['file_name']."".$this->upload->data()['file_ext'];
+							// print_r($this->upload->data());
+							// echo "Your File Uploaded".$receipt_path;
+							// die();
+						}else{
+							print_r($this->upload->display_errors());
+						}
+					}
+				}
+				if($count > 1){
+					$zip = new ZipArchive(); 
+					$f1 = mt_rand(0,1);
+					$f2 = mt_rand(0,1);
+					// $receipt_path = "../uploads/$f1/".$new_code.".zip";
+					$receipt_path = "uploads/".$new_code.".zip";
+					if($zip->open($receipt_path, ZipArchive::CREATE) !== TRUE) {
+						$error .= "* Sorry ZIP creation failed at this time<br/>";
+					}
+					foreach($_FILES as $k => $value) {
+						
+						if($value == '') { // not empty field
+							continue;
+						}
+						$zip->addFromString($value['name'], file_get_contents($value['tmp_name']));
+					}
+					$zip->close();
+				}
+					$order_history_table = array(
+						'order_id'=>$id,
+						'comment'=>$comments,
+						'added_by'=>$assign_by,
+						'files' =>$receipt_path,
+						'status'=>'1',
+					);
+					$order_history_add = $this->Home_models->saverecords('ps_order_history',$order_history_table);
+					if($order_history_add > 0){
+						echo '1';
+					}else{
+						echo '0';
+					}
+				}
+		}else if($action == 'submit_order'){	
+			$filter['id']= $id;
+			$row_order_history = $this->Home_models->selectrecords('ps_order_child',$filter);
+			$writer_id= $this->input->post('writer_name');
+			$comments= $this->input->post('comments');
+			$assign_by=$_SESSION['user_profile'][0]['id'];
+			$lead_code_filter = array('order_id	' => $id, 'files!=' => '');
+			$this->db->select('count(*) as count');
+			$this->db->from("ps_order_history");
+			$this->db->where($lead_code_filter);
+			$query = $this->db->get()->result();
+			$history_count = $query[0]->count;
+			$file_name  = $history_count == 0 ? 1 : $history_count +1 ;
+			$new_code = $row_order_history[0]['view_code'].'-'.$file_name;
+			$receipt_path = '';
+			if(!empty($_FILES)){
+				$config['upload_path'] = 'uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['file_name'] = $new_code;
+				$this->load->library('upload', $config);
+				$count = count($_FILES);
+				if($count == 1){
+					foreach ($_FILES as $f => $name){
+						if($this->upload->do_upload($f)){
+							$receipt_path = $config['upload_path']."".$config['file_name']."".$this->upload->data()['file_ext'];
+							// print_r($this->upload->data());
+							// echo "Your File Uploaded".$receipt_path;
+							// die();
+						}else{
+							print_r($this->upload->display_errors());
+						}
+					}
+				}
+				if($count > 1){
+					$zip = new ZipArchive(); 
+					$f1 = mt_rand(0,1);
+					$f2 = mt_rand(0,1);
+					// $receipt_path = "../uploads/$f1/".$new_code.".zip";
+					$receipt_path = "uploads/".$new_code.".zip";
+					if($zip->open($receipt_path, ZipArchive::CREATE) !== TRUE) {
+						$error .= "* Sorry ZIP creation failed at this time<br/>";
+					}
+					foreach($_FILES as $k => $value) {
+						if($value == '') { // not empty field
+							continue;
+						}
+						$zip->addFromString($value['name'], file_get_contents($value['tmp_name']));
+					}
+					$zip->close();
+				}
+				$Array = array(	
+						'production_status'=>"3"
+					);
+	             $this->db->where('id', $id);
+		       $update_order_child= $this->db->update('ps_order_child', $Array);
+
+		       if($update_order_child>0) {
+
+       	 			$order_history_table = array(
+						'order_id'=>$id,
+						'comment'=>$comments,
+						'added_by'=>$assign_by,
+						'files' =>$receipt_path,
+						'status'=>'1',
+					);
+					$order_history_add = $this->Home_models->saverecords('ps_order_history',$order_history_table);
+					if($order_history_add > 0){
+						echo '1';
+					}else{
+						echo '0';
+					}
+       		}
+				
+				}
+		}
 	}
 	public function order_add(){
 		$this->load->view('order/add');
 	}
+	
 
 
 	/************** Customer ******************/
@@ -1591,6 +1808,22 @@ class Home extends CI_Controller {
 				"data" => $data
 			);
 		echo json_encode($result);
+	}
+
+		public	function delete_response() {
+		$id = $_POST['id'];
+		$table = $_POST['table'];
+		$columnName = $_POST['columnName'];
+		$columnvalue = $_POST['columnvalue'];
+		$display_data = array($columnName => $columnvalue);
+		$update = $this->Home_models->delete_globle($table,$id,$display_data);
+		$return_arr = array();
+		if ($update > 0) {
+			$return_arr[] = array("Type" => "Success", "Error_type" => "Team", "msg" => "Data Success Fully Updated");
+		} else {
+			$return_arr[] = array("Type" => "Error", "Error_type" => "Team", "msg" => "Server Error");
+		}
+		echo json_encode($return_arr);
 	}
 
 }

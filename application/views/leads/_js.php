@@ -70,12 +70,12 @@ $('#lead-form').submit(function(e){
             }
         action('View Details', data, '', '')
     }
-    function deleted(id) {
+    function history(id) {
         data = {
                 action: 'delete',
                 id: id
             }
-        action('Delete Details', data, '', '')
+        action('History Details', data, '', '')
     }
     function action(header, data, btn, clicks) {
         var data = data;
@@ -142,4 +142,24 @@ $('#lead-form').submit(function(e){
         }
       })
     }
+
+        function deleted(id){
+    $.ajax({
+        type:'POST',
+        data:{'id':id,'table':'ps_leads','columnName':'display_id','columnvalue':'0'},
+        dataType: 'JSON',
+        url: "<?=base_url()?>home/delete_response",
+        success:function(response){
+            var stringified = JSON.stringify(response);
+            var obj = JSON.parse(stringified);
+            if(obj[0].Type=='Error'){
+                swal("Error","Action Not Perfomed ",'error')
+            }else{
+                swal('Lead Deleted',"Lead Deleted",'success').then(function() {
+            window.location = "<?=base_url()?>leads";
+            });
+            }
+        }
+    })
+}
 </script>

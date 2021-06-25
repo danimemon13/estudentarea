@@ -40,6 +40,13 @@
         }
         action('Show Action',data,'','')
     }   
+    function history(id){
+        data = {
+            action: 'history_order',
+            id:id
+        }
+        action('Show Action',data,'','')
+    }
     function action(header, data, btn, clicks) {
         var data = data;
         $.ajax({
@@ -64,18 +71,20 @@
     function action_res(header,data){
       var data = data;
       $.ajax({
-        url: '<?=base_url()?>home/leads_action_response',
+        url: '<?=base_url()?>home/order_action_response',
         type : 'POST',
         data : data,
-        success : function(res){
-            console.log(res);
-            if(res == '1'){
-                swal('Lead Details','Lead Details Update','success');
-                $('#data-table1').DataTable().ajax.reload();
+        success : function(response){
+                var stringified = JSON.stringify(response);
+            var obj = JSON.parse(stringified);
+            if(obj[0].Type=='Error'){
+                swal("Error","Action Not Perfomed ",'error')
             }else{
-                swal('Lead Details','Server Error','error');
+                //swal('Role Updated',"Role Updated",'success')
+            swal('Order Area Updated',"Order Assigned ",'success').then(function() {
+            window.location = "<?=base_url()?>order";
+            });
             }
-          
         },
         error : function(e){
           console.log('Ajax Error'+e)
@@ -86,7 +95,7 @@
     function action_res_img(header,data){
       var data = data;
       $.ajax({
-        url: '<?=base_url()?>home/leads_action_response',
+        url: '<?=base_url()?>home/order_action_response',
         type : 'POST',
         data : data,
         contentType: false,
@@ -105,4 +114,24 @@
         }
       })
     }
+
+    function deleted(id){
+    $.ajax({
+        type:'POST',
+        data:{'id':id,'table':'ps_order_main','columnName':'display_id','columnvalue':'0'},
+        dataType: 'JSON',
+        url: "<?=base_url()?>home/delete_response",
+        success:function(response){
+            var stringified = JSON.stringify(response);
+            var obj = JSON.parse(stringified);
+            if(obj[0].Type=='Error'){
+                swal("Error","Action Not Perfomed ",'error')
+            }else{
+                swal('Order Deleted',"Order Deleted",'success').then(function() {
+            window.location = "<?=base_url()?>order";
+            });
+            }
+        }
+    })
+}
 </script>

@@ -83,7 +83,9 @@
                             <th>Team</th>
                             <th>Department</th>
                             <th>Employee Id</th>
-                            <th>Extension</th>
+                            <th>Extension</th>  
+                            <th>Team Lead</th>  
+                            <th>Manger</th>  
                             <th>Action</th>
                         </tr>
                     </thead>

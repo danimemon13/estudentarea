@@ -28,7 +28,7 @@
   -o-appearance: none;
   appearance: none;
   position: relative;
-  top: 13.33333px;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
@@ -131,18 +131,26 @@
                   </div>
                 </div>
                 <div class="row">
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label>Employee Id</label>
+                      <input type="text" name="employee_id" value="<?=$userdetails[0]->employee_id;?>" class="form-control shadow-sm p-3" placeholder="Employee Id" required>
+                    </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label>Extension</label>
+                      <input type="text" name="extension" value="<?=$userdetails[0]->extension;?>" class="form-control shadow-sm p-3" placeholder="Extension" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                        <div class="form-group">
-                        <label>Employee Id</label>
-                        <input type="text" name="employee_id" value="<?=$userdetails[0]->employee_id;?>" class="form-control shadow-sm p-3" placeholder="Employee Id" required>
+                      <label>Allow Ip</label>
+                      <div>
+                          <input type="checkbox" id="allow_ip" <?php echo $userdetails[0]->ip_allow == '1' ? 'checked' : 'unchecked';?> name="allow_ip" class="option-input checkbox">
                       </div>
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                      <div class="form-group">
-                        <label>Extension</label>
-                        <input type="text" name="extension" value="<?=$userdetails[0]->extension;?>" class="form-control shadow-sm p-3" placeholder="Extension" required>
-                      </div>
-                  </div>
                 </div>
                 <div class="row">
                   <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
@@ -153,18 +161,18 @@
                         <?php
                           foreach($team as $teams){
                         ?>
-                          <option value="<?=$teams['id'];?>"<?php if($teams['id']==$userdetails[0]->team) echo 'selected="selected"'; ?>><?=$teams['name'];?></option>
+                        <option value="<?=$teams['id'];?>"<?php if($teams['id']==$userdetails[0]->team) echo 'selected="selected"'; ?>><?=$teams['name'];?></option>
                         <?php
                         }
                         ?>
                       </select>
                     </div>
                   </div>
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                     <div class="form-group">
                       <label>Select Department</label>
-                      <select name="department" id="departmentDiv" onchange="getdatabyTeam(this.value,'ps_role','depart_id','roleDiv')" class="form-control shadow-sm p-3 dropdowns"  required>
-                        <option value="">Select Team</option>
+                      <select name="department" id="departmentDiv" class="form-control shadow-sm p-3 dropdowns"  required>
+                        <option value="">Select Department</option>
                         <?php
                           foreach($dep as $deps){
                         ?>
@@ -178,8 +186,8 @@
                   <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                     <div class="form-group">
                       <label>Select Role</label>
-                      <select name="role" id="roleDiv" class="form-control shadow-sm p-3 dropdowns" required>
-                        <option value="">Select Team</option>
+                      <select name="role" id="role" class="form-control shadow-sm p-3 dropdowns" onchange="check_role1()" required>
+                        <option value="">Select Role</option>
                             <?php
                             foreach($role as $roles){
                             ?>
@@ -190,11 +198,14 @@
                       </select>
                     </div>
                   </div>
-                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 ">
-                    <label>Allow Ip</label>
-                    <div>
-                        
-                        <input type="checkbox" id="allow_ip" <?php echo $userdetails[0]->ip_allow == '1' ? 'checked' : 'unchecked';?> name="allow_ip" class="option-input checkbox">
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                      <div class="form-group" id="dynamic_team_leads">
+                         
+                      </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="form-group" id="dynamic_managers">
+                            
                     </div>
                   </div>
                 </div>

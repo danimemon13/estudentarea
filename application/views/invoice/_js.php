@@ -266,6 +266,26 @@ services.addtocart(service_name,service,page,qty,turn,quality,subject,industry,w
           }
         })
 
+ function deleted(id){
+    $.ajax({
+        type:'POST',
+        data:{'id':id,'table':'ps_invoice_basic','columnName':'display_id','columnvalue':'0'},
+        dataType: 'JSON',
+        url: "<?=base_url()?>home/delete_response",
+        success:function(response){
+            var stringified = JSON.stringify(response);
+            var obj = JSON.parse(stringified);
+            if(obj[0].Type=='Error'){
+                swal("Error","Action Not Perfomed ",'error')
+            }else{
+                swal('Invoice Deleted',"Invoice Deleted",'success').then(function() {
+            window.location = "<?=base_url()?>invoice";
+            });
+            }
+        }
+    })
+}
+
 
 
 

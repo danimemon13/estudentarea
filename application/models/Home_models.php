@@ -62,30 +62,26 @@ class Home_models extends CI_Model
         $return_arr[] = array("Type" => "Success","Error_type" => "confirm_password_error","msg"=>"Data Updated");
 		echo json_encode($return_arr);
     }
-    public function update_team($editData, $id) {
-        $this->db->where('id', $id);
 
-        if ($this->db->update('ps_team', $editData)) {
-            return true;
-        } else {
+     function delete_globle($table,$id,$data)
+        {
+        $this->db->where('id', $id);
+        if($this->db->update($table,$data))
+        {
+        return true;
+        }
+        else {
             return false;
         }
     }
-    public function update_department($editData, $id) {
+       function update_globl($table,$id,$data)
+        {
         $this->db->where('id', $id);
-
-        if ($this->db->update('ps_department', $editData)) {
-            return true;
-        } else {
-            return false;
+        if($this->db->update($table,$data))
+        {
+        return true;
         }
-    }
-    public function update_role($editData, $id) {
-        $this->db->where('id', $id);
-
-        if ($this->db->update('ps_role', $editData)) {
-            return true;
-        } else {
+        else {
             return false;
         }
     }
