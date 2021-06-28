@@ -95,9 +95,23 @@ function deleted(id){
             if(obj[0].Type=='Error'){
                 swal("Error","Action Not Perfomed ",'error')
             }else{
-                swal('Role Deleted',"Role Deleted",'success').then(function() {
-            window.location = "<?=base_url()?>role";
-            });
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                })
+                .then((willDelete) => {
+                if (willDelete) {
+                    window.location = "<?=base_url()?>role";
+                    // swal("Poof! Your imaginary file has been deleted!", {
+                    //   icon: "success",
+                    // });
+                } else {
+                    swal("Your file is safe!");
+                }
+                });
             }
         }
     })

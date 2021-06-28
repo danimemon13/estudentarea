@@ -10,57 +10,61 @@
 <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
 
 <script>
-    var width = $(window).width();
-    $(function(){
-        $(window).resize(function () { 
-            var width = $(window).width();
-        });
-            $("#data-table1").DataTable({
-            'ajax': '<?=base_url()?>home/website_response',
-            "pageLength": 10,
-            "lengthMenu": [
-                [10, 25, 50, 100, -1 ],
-                [10, 25, 50, 100, "All"]
-            ],
-            'order': [0, 'asc'],
-            "responsive" : width > 800 ? false : {
-                details: {
-                    type: 'column',
-                    target: 'tr'
-                }
-            },
-        });
+
+ var width = $(window).width();
+$(function(){
+    $(window).resize(function () { 
+        var width = $(window).width();
     });
-    $("#website-form").on('submit',(function(e) {
-        e.preventDefault();
-        $.ajax({
-                url: "<?=base_url()?>Home/website_add_response",
-        type: "POST",
-        data:  new FormData(this),
-        contentType: false,
-                cache: false,
-        processData:false,
-            success:function(response){
-                    console.log(response);
-                    var stringified = JSON.stringify(response);
-                    var obj = JSON.parse(stringified);
-                    if(obj[0].Type=='Error'){
-                        swal("Error","Action Not Perfomed ",'error')
-                    }else{
-                        swal('Website Added',"New Website Inserted",'success').then(function() {
-                    window.location = "<?=base_url()?>website";
-                    });
-                    }
-                },        
+        $("#data-table1").DataTable({
+        'ajax': '<?=base_url()?>home/website_response',
+        "pageLength": 10,
+        "lengthMenu": [
+            [10, 25, 50, 100, -1 ],
+            [10, 25, 50, 100, "All"]
+        ],
+        'order': [0, 'asc'],
+        "responsive" : width > 800 ? false : {
+            details: {
+                type: 'column',
+                target: 'tr'
+            }
+        },
+    });
+});
+
+$("#website-form").on('submit',(function(e) {
+  e.preventDefault();
+  $.ajax({
+         url: "<?=base_url()?>Home/website_add_response",
+   type: "POST",
+   data:  new FormData(this),
+   contentType: false,
+         cache: false,
+   processData:false,
+    success:function(response){
+            console.log(response);
+            var stringified = JSON.stringify(response);
+            var obj = JSON.parse(stringified);
+            if(obj[0].Type=='Error'){
+                swal("Error","Action Not Perfomed ",'error')
+            }else{
+                  swal('Website Added',"New Website Inserted",'success').then(function() {
+            window.location = "<?=base_url()?>website";
             });
-    }));
-    function edit_website(id) {
+            }
+        },        
+    });
+ }));
+
+   function edit_website(id) {
         data = {
                 action: 'edit',
                 id: id
             }
         action('Edit Details', data, '', '')
     }
+
     function action(header, data, btn, clicks) {
         var data = data;
         $.ajax({
@@ -101,23 +105,41 @@
             }
         })
     }
-    function deleted(id){
-        $.ajax({
-            type:'POST',
-            data:{'id':id,'table':'ps_website','columnName':'display_id','columnvalue':'0'},
-            dataType: 'JSON',
-            url: "<?=base_url()?>home/delete_response",
-            success:function(response){
-                var stringified = JSON.stringify(response);
-                var obj = JSON.parse(stringified);
-                if(obj[0].Type=='Error'){
-                    swal("Error","Action Not Perfomed ",'error')
-                }else{
-                    swal('Website Deleted',"Website Deleted",'success').then(function() {
-                window.location = "<?=base_url()?>website";
-                });
+
+     function deleted(id){
+    $.ajax({
+        type:'POST',
+        data:{'id':id,'table':'ps_website','columnName':'display_id','columnvalue':'0'},
+        dataType: 'JSON',
+        url: "<?=base_url()?>home/delete_response",
+        success:function(response){
+            var stringified = JSON.stringify(response);
+            var obj = JSON.parse(stringified);
+            if(obj[0].Type=='Error'){
+                swal("Error","Action Not Perfomed ",'error')
+            }else{
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                })
+                .then((willDelete) => {
+                if (willDelete) {
+                    window.location = "<?=base_url()?>website";
+                    // swal("Poof! Your imaginary file has been deleted!", {
+                    //   icon: "success",
+                    // });
+                } else {
+                    swal("Your file is safe!");
                 }
+                });
             }
-        })
-    }
+        }
+    })
+}
+
+
+
 </script>

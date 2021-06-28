@@ -2,12 +2,14 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Home extends CI_Controller {
+	
     function __construct() {
         parent::__construct();
         $this->load->library('form_validation');    
 		$this->load->library('zip');    
 		$this->load->helper('pdf_helper');  
     }
+
     public function login(){
     	if ( $this->session->userdata('is_login'))
        	{
@@ -201,21 +203,7 @@ class Home extends CI_Controller {
 		}
         // $this->load->view('email_form');
     }
-	public	function delete_response() {
-		$id = $_POST['id'];
-		$table = $_POST['table'];
-		$columnName = $_POST['columnName'];
-		$columnvalue = $_POST['columnvalue'];
-		$display_data = array($columnName => $columnvalue);
-		$update = $this->Home_models->delete_globle($table,$id,$display_data);
-		$return_arr = array();
-		if ($update > 0) {
-			$return_arr[] = array("Type" => "Success", "Error_type" => "Team", "msg" => "Data Success Fully Updated");
-		} else {
-			$return_arr[] = array("Type" => "Error", "Error_type" => "Team", "msg" => "Server Error");
-		}
-		echo json_encode($return_arr);
-	}
+	
 	
 
 	/************** Department ******************/
@@ -235,7 +223,9 @@ class Home extends CI_Controller {
 		  $this->db->join('ps_department', 'ps_team.id = ps_department.fk_team_id');
 	      $this->db->order_by("ps_department.id","desc"); 
 	      $query = $this->db->get();
+      
       $data = [];
+
       $count=0;     
       foreach($query->result() as $r) {
 			$btn  = '<div class="btn-group" data-toggle="buttons">';
@@ -253,12 +243,16 @@ class Home extends CI_Controller {
                 $btn
            );
       }
+
+
       $result = array(
                "draw" => $draw,
                  "recordsTotal" => $query->num_rows(),
                  "recordsFiltered" => $query->num_rows(),
                  "data" => $data
             );
+
+
       echo json_encode($result);
     } 
 	public function department_add(){
@@ -271,7 +265,8 @@ class Home extends CI_Controller {
 		$array = $_POST;
 		$addepartment = $this->Home_models->saverecords('ps_department',$array);
 		$return_arr = array();
-		if($addepartment>0){			
+		if($addepartment>0){
+			
 			$return_arr[] = array("Type" => "Success","Error_type" => "department","msg"=>"Data Success Fully Inserted");
 		}else{
 			$return_arr[] = array("Type" => "Error","Error_type" => "department","msg"=>"Server Error");
@@ -283,10 +278,12 @@ class Home extends CI_Controller {
     	$data['team'] = $this->Home_models->selectrecords('ps_team');
 		$userArray = array('id' => $id);
 		$data['dep_id'] = $this->Home_models->selectrecords('ps_department',$userArray);
+
 		$this->load->template('department/edit',$data);
     	$this->load->view('department/_js');
+
 	}
-	public function department_edit_response(){
+	public function department_edit_response(){	
 		$id= $this->input->post('id');
 		$editData['name'] = $this->input->post('name');
 		$editData['fk_team_id'] = $this->input->post('fk_team_id');
@@ -303,6 +300,7 @@ class Home extends CI_Controller {
 	/************** Team ******************/
 	public function team(){
 		$data['menu'] = $this->MenuModel->category_menu(1);
+
 		$data['team'] = $this->Home_models->selectrecords('ps_team');
 		$this->load->template('team/index',$data);
 		$this->load->view('team/_js');
@@ -316,7 +314,9 @@ class Home extends CI_Controller {
       $this->db->where('ps_team.status !=' ,"0");
       $this->db->order_by("id","desc"); 
       $query = $this->db->get();
+      
       $data = [];
+
       $count=0;     
       foreach($query->result() as $r) {
 		  	$btn = '<div class="btn-group" data-toggle="buttons">';
@@ -347,6 +347,7 @@ class Home extends CI_Controller {
     }
 	public function team_add(){
 		$data['menu'] = $this->MenuModel->category_menu(1);
+
 		$this->load->template('team/add',$data);
     	$this->load->view('team/_js');
 	}
@@ -494,7 +495,6 @@ class Home extends CI_Controller {
 						   ps_user_profile.last_name_real as last_name_real,
 						   ps_user_profile.role,
 						   ps_user_login.status,
-						   ps_user_login.ip_allow,
 						   ps_team.name as user_team, 
 						   ps_role.name as user_role, 
 						   ps_department.name as user_department,
@@ -505,6 +505,7 @@ class Home extends CI_Controller {
 
 			");
 		$this->db->from("ps_user_profile");
+		$this->db->where('ps_user_login.status !=' ,"0");
 		$this->db->join('ps_user_login', 'ps_user_profile.id = ps_user_login.id');
 		$this->db->join('ps_team', 'ps_user_profile.team = ps_team.id','left');
 		$this->db->join('ps_role', 'ps_user_profile.role = ps_role.id','left');
@@ -537,14 +538,6 @@ class Home extends CI_Controller {
 			$username_r =  $r->first_name_real."-".$r->last_name_real;
 			$manger =  $r->first_name_real_manager."-".$r->last_name_real_manager;
 			$team_lead =  $r->first_name_real_team_lead."-".$r->last_name_real_team_lead;
-
-			$user_status = $r->status == 0 ? 'danger' : 'success';
-			$user_status_text = $r->status == 0 ? 'Inactive' : 'Active';
-			$status = '<span class="badge badge-'.$user_status.' es-label " style="font-size : 13px">'.$user_status_text.'</span>';
-
-			$user_ip_status = $r->ip_allow == 0 ? 'danger' : 'success';
-			$user_ip_status_text = $r->ip_allow == 0 ? 'Inactive' : 'Active';
-			$ipAllow = '<span class="badge badge-'.$user_ip_status.' es-label " style="font-size : 13px">'.$user_ip_status_text.'</span>';
 			$data[] = array(
                 ++$count,
                 $username_r,
@@ -556,8 +549,6 @@ class Home extends CI_Controller {
                 $r->extension,
                 $team_lead,
                 $manger,
-				$status,
-				$ipAllow,
                 $btn
            );
       }
@@ -657,33 +648,44 @@ class Home extends CI_Controller {
 		$department 		= $_POST['department'];
 		$role 				= $_POST['role'];
 		$user_id 			= $_POST['user_id'];
-		$allow_ip = !isset($_POST['allow_ip']) ? '0' : '1';
-		$is_active = !isset($_POST['status']) ? '0' : '1';
 		if($password == ''){
+			$allow_ip = !isset($_POST['allow_ip']) ? '0' : '1';
+			// echo $allow_ip;
+			// die();
 			$data = array(
 				'user_name' => $user_name,
-				'status'=>"$is_active",
 				'ip_allow'=>"$allow_ip"
 			);
+			$data1 = array(
+				'first_name' => $first_name,
+				'last_name' => $last_name,
+				'first_name_real' => $first_name_real,
+				'last_name_real' => $last_name_real,
+				'employee_id' => $employee_id,
+				'extension' => $extension,
+				'team' => $team,
+				'department' => $department,
+				'role' => $role
+			);
 		}else{
+			$allow_ip = !isset($_POST['allow_ip']) ? '0' : '1';
 			$data = array(
 				'user_name' => $user_name,
 				'password' => md5($password),
-				'status'=>"$is_active",
 				'ip_allow'=>"$allow_ip"
 			);
+			$data1 = array(
+				'first_name' => $first_name,
+				'last_name' => $last_name,
+				'first_name_real' => $first_name_real,
+				'last_name_real' => $last_name_real,
+				'employee_id' => $employee_id,
+				'extension' => $extension,
+				'team' => $team,
+				'department' => $department,
+				'role' => $role
+			);
 		}
-		$data1 = array(
-			'first_name' => $first_name,
-			'last_name' => $last_name,
-			'first_name_real' => $first_name_real,
-			'last_name_real' => $last_name_real,
-			'employee_id' => $employee_id,
-			'extension' => $extension,
-			'team' => $team,
-			'department' => $department,
-			'role' => $role
-		);
 		if($role == '1'){
 				$data1['manager'] = '0';
 		}
@@ -810,6 +812,7 @@ class Home extends CI_Controller {
 		$this->load->view('leads/_js');
 	}
 	public function leads_response(){
+
 		$draw 	= intval($this->input->get("draw"));
 		$start 	= intval($this->input->get("start"));
 		$length 	= intval($this->input->get("length"));
@@ -830,15 +833,13 @@ class Home extends CI_Controller {
 		pup.last_name as last_name_user,
 		pls.name as status,
 		pls.status_btn as status_btn,
-		pw.name as website_name
 		");
 		$this->db->from("ps_leads as pl");
+		$this->db->where('pl.display_id !=' ,"0");
 		$this->db->join('ps_customers as pc', 'pl.id = pc.lead_id');
 		$this->db->join('ps_team as pt', 'pl.team_id = pt.id');
 		$this->db->join('ps_user_profile as pup', 'pup.fk_parent_id = pl.created_by','left');
 		$this->db->join('ps_leads_status as pls', 'pls.id = pl.lead_status');
-		$this->db->join('ps_website as pw', 'pw.id = pl.website_id');
-		$this->db->where('pl.display_id !=' ,"0");
 		$this->db->order_by("pl.id","desc"); 
 		$query = $this->db->get();
 		$data = [];
@@ -847,10 +848,10 @@ class Home extends CI_Controller {
       foreach($query->result() as $r) {
 
 		$btn = '<div class="btn-group" data-toggle="buttons">';
-			$btn .= '<button id="'.$r->lead_id.'" onclick="edit_leads(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
-			$btn .= '<button id="'.$r->lead_id.'" onclick="view(this.id)" class="btn btn-warning btn-sm"><i class="fa fa-eye"></i></button>';
-			$btn .= '<button id="'.$r->lead_id.'" onclick="history(this.id)" class="btn btn-success btn-sm"><i class="fas fa-history"></i></button>';
-			$btn .= '<button onClick="deleted(this.id)" id="'.$r->lead_id.'" class="btn btn-danger btn-icon">';
+		$btn .= '<button id="'.$r->lead_id.'" onclick="edit_leads(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
+		$btn .= '<button id="'.$r->lead_id.'" onclick="view(this.id)" class="btn btn-warning btn-sm"><i class="fa fa-eye"></i></button>';
+		$btn .= '<button id="'.$r->lead_id.'" onclick="history(this.id)" class="btn btn-success btn-sm"><i class="fas fa-history"></i></button>';
+		$btn  .= '<button onClick="deleted(this.id)" id="'.$r->lead_id.'" class="btn btn-danger btn-icon">';
 			$btn .= '<i class="fa fa-trash"></i>';
 			$btn .= '</button>';
 		$btn .='</div>';
@@ -867,8 +868,9 @@ class Home extends CI_Controller {
                 $btn_number,
                 $r->created_at,
 				$btn_user_name,
+                // $r->comments,
                 $btn_status,
-                $r->website_name,
+                $r->website_id."website here",
                 $r->lead_team,
                 $r->type_lead,
                 $btn
@@ -1104,6 +1106,7 @@ class Home extends CI_Controller {
 		$this->load->view('website/_js');
 	}
 	public function website_response(){
+		
 		$draw 	= intval($this->input->get("draw"));
 		$start 	= intval($this->input->get("start"));
 		$length 	= intval($this->input->get("length"));
@@ -1131,44 +1134,44 @@ class Home extends CI_Controller {
 		$this->db->order_by("pw.id","desc"); 
 		$query = $this->db->get();
 		$data = [];
-      	$count=0;     
-      	foreach($query->result() as $r) {
-			$btn = '<div class="btn-group" data-toggle="buttons">';
-			$btn .= '<button id="'.$r->website_id.'" onclick="edit_website(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
-			$btn  .= '<button onClick="deleted(this.id)" id="'.$r->website_id.'" class="btn btn-danger btn-icon">';
-				$btn .= '<i class="fa fa-trash"></i>';
-			$btn .='</div>';
+      $count=0;     
+      foreach($query->result() as $r) {
+		$btn = '<div class="btn-group" data-toggle="buttons">';
+		$btn .= '<button id="'.$r->website_id.'" onclick="edit_website(this.id)" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
+		$btn  .= '<button onClick="deleted(this.id)" id="'.$r->website_id.'" class="btn btn-danger btn-icon">';
+			$btn .= '<i class="fa fa-trash"></i>';
+		$btn .='</div>';
 
-			$badge = $r->status == 1 ? 'badge-success' : 'badge-danger';
-			
-			$w_status = $r->status == 1 ? 'Active' : 'Inactive';
+		$badge = $r->status == 1 ? 'badge-success' : 'badge-danger';
+        
+        $w_status = $r->status == 1 ? 'Active' : 'Inactive';
 
-			$web_status= "<span class='badge $badge p-2 font-weight-bold text-uppercase' style='font-size: 10px; letter-spacing: 3px;'> $w_status </span>";
-			$path = $r->logo;
-			$base= base_url()."uploads/logo/";
-			$logo_path = "<img src='$base$path' width='40'>";
+        $web_status= "<span class='badge $badge p-2 font-weight-bold text-uppercase' style='font-size: 10px; letter-spacing: 3px;'> $w_status </span>";
+        $path = $r->logo;
+        $base= base_url()."uploads/logo/";
+        $logo_path = "<img src='$base$path' width='40'>";
 
-			$created_by = '<span class="badge es-label " style="font-size : 13px">'.$r->first_name." ".$r->last_name.'</span>';
-				$data[] = array(
-					++$count,
-					$r->website_name,
-					$r->descriptor, 
-					$r->t_name,
-					$r->type,
-					$r->created_at,
-					$created_by,
-					$web_status,  
-					$logo_path,
-					$btn 
-			);
-		}
-		$result = array(
-					"draw" => $draw,
-					"recordsTotal" => $query->num_rows(),
-					"recordsFiltered" => $query->num_rows(),
-					"data" => $data
-					);
-		echo json_encode($result);
+		$created_by = '<span class="badge es-label " style="font-size : 13px">'.$r->first_name." ".$r->last_name.'</span>';
+			$data[] = array(
+				++$count,
+                $r->website_name,
+                $r->descriptor, 
+                $r->t_name,
+                $r->type,
+                $r->created_at,
+				$created_by,
+				$web_status,  
+                $logo_path,
+                $btn 
+           );
+      }
+      $result = array(
+               "draw" => $draw,
+                 "recordsTotal" => $query->num_rows(),
+                 "recordsFiltered" => $query->num_rows(),
+                 "data" => $data
+            );
+      echo json_encode($result);
 	}
 	public function website_add(){
 		$data['team'] = $this->Home_models->selectrecords('ps_team');
@@ -1220,44 +1223,45 @@ class Home extends CI_Controller {
 	public function website_action_response(){
 		$action = $_POST['action'];
 		if($action == 'change_team'){
-			$id= $this->input->post('id');
-			$editData['team'] = $this->input->post('team');
-			$this->db->where('id', $id);
-			$update= $this->db->update('ps_website', $editData);
-			$return_arr = array();
-			if($update>0){
-				$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
-			}else{
-				$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
-			}
-			echo json_encode($return_arr);
+		$id= $this->input->post('id');
+	   $editData['team'] = $this->input->post('team');
+       $this->db->where('id', $id);
+       $update= $this->db->update('ps_website', $editData);
+       	$return_arr = array();
+		if($update>0){
+			$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
+		}else{
+			$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
+		}
+		echo json_encode($return_arr);
 		}else if($action == 'change_type'){
 			$id= $this->input->post('id');
-			$editData['type'] = $this->input->post('type');
-			$this->db->where('id', $id);
-			$update= $this->db->update('ps_website',$editData);
-			$return_arr = array();
-			if($update>0){
-				$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data SuccessFully Updated");
-			}else{
-				$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
-			}
-			echo json_encode($return_arr);
-		}else if($action == 'change_status'){
-			$id= $this->input->post('id');
-			$editData['status'] = $this->input->post('status');
-			$this->db->where('id', $id);
-			$update= $this->db->update('ps_website', $editData);
-		
-			$return_arr = array();
-			if($update>0){
-				$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data SuccessFully Updated");
-			}else{
-				$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
-			}
-			echo json_encode($return_arr);
-			
+		$editData['type'] = $this->input->post('type');
+        $this->db->where('id', $id);
+        $update= $this->db->update('ps_website',$editData);
+		$return_arr = array();
+		if($update>0){
+			$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data SuccessFully Updated");
 		}else{
+			$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
+		}
+		echo json_encode($return_arr);
+		}else if($action == 'change_status'){
+				$id= $this->input->post('id');
+		$editData['status'] = $this->input->post('status');
+        $this->db->where('id', $id);
+       $update= $this->db->update('ps_website', $editData);
+       
+		$return_arr = array();
+		if($update>0){
+			$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data SuccessFully Updated");
+		}else{
+			$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
+		}
+		echo json_encode($return_arr);
+			
+		}
+		else{
 			echo 'anotherone';
 		}
 	}
@@ -1303,7 +1307,7 @@ class Home extends CI_Controller {
 		$this->db->order_by("inv.id","desc"); 
 		$query = $this->db->get();
 		$data = [];
-		$count=0;
+		$count=0;     
 		foreach($query->result() as $r) {
 			$btn = '<div class="btn-group" data-toggle="buttons">';
 			$btn .= '<button id="'.$r->invoice_id.'" onclick="edit_invoice(this.id,\''.$r->invoice_no.'\')" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>';
@@ -1312,6 +1316,9 @@ class Home extends CI_Controller {
 			$btn .= '<button id="'.$r->invoice_id.'" onClick="deleted(this.id)" class="btn btn-danger btn-icon"><i class="fa fa-trash"></i></button>';
 			$btn .='</div>';
 
+			
+			
+			
 			$badge = $r->status == 1 ? 'badge-success' : 'badge-danger';
 			
 			$inv_status = $r->status == 1 ? 'Paid' : 'Unpaid';
@@ -1558,13 +1565,14 @@ class Home extends CI_Controller {
 		");
 		
 		$this->db->from("ps_order_main as ord");
-		$this->db->where('ord.display_id !=' ,"0");
+		 $this->db->where('ord.display_id !=' ,"0");
 		$this->db->join('ps_order_child as orc', 'orc.order_id = ord.id');
 		$this->db->join('ps_order_production_status as pors', 'orc.production_status = pors.id');
 		
 		// $this->db->where('orc.display', '1');
 		$query = $this->db->get();
-			
+		
+	
 		$data = [];
 		$count=0;     
 		foreach($query->result() as $r) {
@@ -1826,5 +1834,20 @@ class Home extends CI_Controller {
 			);
 		echo json_encode($result);
 	}
-	
+	public	function delete_response() {
+		$id = $_POST['id'];
+		$table = $_POST['table'];
+		$columnName = $_POST['columnName'];
+		$columnvalue = $_POST['columnvalue'];
+		$display_data = array($columnName => $columnvalue);
+		$update = $this->Home_models->delete_globle($table,$id,$display_data);
+		$return_arr = array();
+		if ($update > 0) {
+			$return_arr[] = array("Type" => "Success", "Error_type" => "Team", "msg" => "Data Success Fully Updated");
+		} else {
+			$return_arr[] = array("Type" => "Error", "Error_type" => "Team", "msg" => "Server Error");
+		}
+		echo json_encode($return_arr);
+	}
+
 }

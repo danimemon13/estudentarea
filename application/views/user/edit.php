@@ -147,9 +147,9 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                       <label>Allow Ip</label>
+                      <div>
                           <input type="checkbox" id="allow_ip" <?php echo $userdetails[0]->ip_allow == '1' ? 'checked' : 'unchecked';?> name="allow_ip" class="option-input checkbox">
-                      <label>Status</label>
-                          <input type="checkbox" id="status" <?php echo $userdetails[0]->status == '1' ? 'checked' : 'unchecked';?> name="status" class="option-input checkbox">
+                      </div>
                     </div>
                 </div>
                 <div class="row">

@@ -66,7 +66,7 @@
                     </div>
                     <div class="col-md-8"></div>
                     <div class="col-md-1">
-                      <a type="button" href="add" class="btn btn-primary btn-sm p-2">Add User</a>    
+                      <button type="button" class="btn btn-primary btn-sm p-3">Add Team</button>
                     </div>
                   </div>
                   
@@ -86,8 +86,6 @@
                             <th>Extension</th>  
                             <th>Team Lead</th>  
                             <th>Manger</th>  
-                            <th>Status</th>  
-                            <th>Outside Access</th>  
                             <th>Action</th>
                         </tr>
                     </thead>
