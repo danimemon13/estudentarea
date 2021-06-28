@@ -278,9 +278,19 @@ services.addtocart(service_name,service,page,qty,turn,quality,subject,industry,w
             if(obj[0].Type=='Error'){
                 swal("Error","Action Not Perfomed ",'error')
             }else{
-                swal('Invoice Deleted',"Invoice Deleted",'success').then(function() {
-            window.location = "<?=base_url()?>invoice";
-            });
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                }).then((willDelete) => {
+                if (willDelete) {
+                    window.location = "<?=base_url()?>invoice";
+                } else {
+                    swal("Your file is safe!");
+                }
+                });
             }
         }
     })

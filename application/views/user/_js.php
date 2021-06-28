@@ -360,9 +360,19 @@ function deleted(id){
             if(obj[0].Type=='Error'){
                 swal("Error","Action Not Perfomed ",'error')
             }else{
-                swal('User Deleted',"User Deleted",'success').then(function() {
-            window.location = "<?=base_url()?>user";
-            });
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                }).then((willDelete) => {
+                if (willDelete) {
+                    window.location = "<?=base_url()?>user";
+                } else {
+                    swal("Your file is safe!");
+                }
+                });
             }
         }
     })
