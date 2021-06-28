@@ -145,9 +145,9 @@ form#user-form button {
                   <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                       <label>Allow Ip</label>
-                      <div>
                           <input type="checkbox" id="allow_ip" name="allow_ip" class="option-input checkbox">
-                      </div>
+                      <label>Status</label>
+                          <input type="checkbox" id="status" name="status" class="option-input checkbox">
                     </div>
                   </div>
                   <div class="row">
