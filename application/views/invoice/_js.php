@@ -266,35 +266,7 @@ services.addtocart(service_name,service,page,qty,turn,quality,subject,industry,w
           }
         })
 
- function deleted(id){
-    $.ajax({
-        type:'POST',
-        data:{'id':id,'table':'ps_invoice_basic','columnName':'display_id','columnvalue':'0'},
-        dataType: 'JSON',
-        url: "<?=base_url()?>home/delete_response",
-        success:function(response){
-            var stringified = JSON.stringify(response);
-            var obj = JSON.parse(stringified);
-            if(obj[0].Type=='Error'){
-                swal("Error","Action Not Perfomed ",'error')
-            }else{
-            swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this imaginary file!",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-                }).then((willDelete) => {
-                if (willDelete) {
-                    window.location = "<?=base_url()?>invoice";
-                } else {
-                    swal("Your file is safe!");
-                }
-                });
-            }
-        }
-    })
-}
+
 function edit_invoice(id,invoice_no){
     data = {
             action: 'edit',
@@ -309,7 +281,7 @@ function edit_invoice(id,invoice_no){
             id: id,
             inv_no: invoice_no
         }
-    action('Edit Details', data, '', '')
+    action('Service Details', data, '', '')
   }
   function history_invoice(id,invoice_no){ 
     data = {
@@ -317,7 +289,7 @@ function edit_invoice(id,invoice_no){
             id: id,
             inv_no: invoice_no
         }
-    action('Edit Details', data, '', '')
+    action('History Details', data, '', '')
   }
   function action(header, data, btn, clicks) {
       var data = data;
@@ -385,6 +357,36 @@ function edit_invoice(id,invoice_no){
     })
   }
 
+    function deleted(id){
+        swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                }).then((willDelete) => {
+                if (willDelete) {
+                     $.ajax({
+                        type:'POST',
+                      data:{'id':id,'table':'ps_invoice_basic','columnName':'display_id','columnvalue':'0'},
+                        dataType: 'JSON',
+                        url: "<?=base_url()?>home/delete_response",
+                        success:function(response){
+                            var stringified = JSON.stringify(response);
+                            var obj = JSON.parse(stringified);
+                            if(obj[0].Type=='Error'){
+                                swal("Error","Action Not Perfomed ",'error')
+                            }else{
+                                swal("Invoice","Invoice Deleted ",'success')
+                            }
+                        }
+                    })
+                } else {
+
+                    swal("Your imaginary file is safe!");
+                }
+                }); 
+}
 
 
 

@@ -65,9 +65,7 @@
                       <h5 class="text-uppercase font-weight-bold">Users Table</h5>
                     </div>
                     <div class="col-md-8"></div>
-                    <div class="col-md-1">
-                      <a type="button" href="add" class="btn btn-primary btn-sm p-2">Add User</a>    
-                    </div>
+                   
                   </div>
                   
                   
@@ -76,19 +74,20 @@
                   <table id="data-table1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>User Name</th>
-                            <th>User Name (Sudo)</th>
-                            <th>Role</th>
-                            <th>Team</th>
-                            <th>Department</th>
-                            <th>Employee Id</th>
-                            <th>Extension</th>  
-                            <th>Team Lead</th>  
-                            <th>Manger</th>  
-                            <th>Status</th>  
-                            <th>Outside Access</th>  
-                            <th>Action</th>
+                          <th>#</th>
+                          <th>ID</th>
+                          <th>User Name</th>
+                          <th>User Name (Sudo)</th>
+                          <th>Role</th>
+                          <th>Team</th>
+                          <th>Department</th>
+                          <th>Employee Id</th>
+                          <th>Extension</th>  
+                          <th>Team Lead</th>  
+                          <th>Manger</th>  
+                          <th>Status</th>  
+                          <th>Outside Access</th>  
+                          <th>Action</th>
                         </tr>
                     </thead>
                     <tbody></tbody>                               

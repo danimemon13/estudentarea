@@ -58,10 +58,11 @@
                     <textarea class="form-control shadow-sm p-3 " placeholder="Enter Your Comments" name="comments" id="comments" cols="30" rows="10"></textarea> 
                   </div>
                 </div>
+                <br>
                 <div class="row">
                   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="form-group">
-                        <button type="submit" name="add_team" class="w-100 btn btn-primary shadow-sm p-3">Add Team</button >
+                        <button type="submit" name="add_team" class="w-100 btn btn-primary shadow-sm p-3">Add Lead</button >
                     </div>
                   </div>
                 </div>          

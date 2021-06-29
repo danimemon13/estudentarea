@@ -143,19 +143,9 @@ $('#lead-form').submit(function(e){
       })
     }
 
-        function deleted(id){
-    $.ajax({
-        type:'POST',
-        data:{'id':id,'table':'ps_leads','columnName':'display_id','columnvalue':'0'},
-        dataType: 'JSON',
-        url: "<?=base_url()?>home/delete_response",
-        success:function(response){
-            var stringified = JSON.stringify(response);
-            var obj = JSON.parse(stringified);
-            if(obj[0].Type=='Error'){
-                swal("Error","Action Not Perfomed ",'error')
-            }else{
-            swal({
+
+    function deleted(id){
+        swal({
                 title: "Are you sure?",
                 text: "Once deleted, you will not be able to recover this imaginary file!",
                 icon: "warning",
@@ -163,13 +153,25 @@ $('#lead-form').submit(function(e){
                 dangerMode: true,
                 }).then((willDelete) => {
                 if (willDelete) {
-                    window.location = "<?=base_url()?>leads";
+                     $.ajax({
+                        type:'POST',
+                       data:{'id':id,'table':'ps_leads','columnName':'display_id','columnvalue':'0'},
+                        dataType: 'JSON',
+                        url: "<?=base_url()?>home/delete_response",
+                        success:function(response){
+                            var stringified = JSON.stringify(response);
+                            var obj = JSON.parse(stringified);
+                            if(obj[0].Type=='Error'){
+                                swal("Error","Action Not Perfomed ",'error')
+                            }else{
+                                swal("leads","leads Deleted ",'success')
+                            }
+                        }
+                    })
                 } else {
-                    swal("Your file is safe!");
+
+                    swal("Your imaginary file is safe!");
                 }
-                });
-            }
-        }
-    })
+                }); 
 }
 </script>

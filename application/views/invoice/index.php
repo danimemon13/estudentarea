@@ -61,7 +61,7 @@
                 <div class="card-header border-0 text-white pt-3 pb-3">
                   <div class="row">
                     <div class="col-md-3">
-                      <h5 class="text-uppercase font-weight-bold">websites Table</h5>
+                      <h5 class="text-uppercase font-weight-bold">Invoice Table</h5>
                     </div>
                     <div class="col-md-8"></div>
                   </div>

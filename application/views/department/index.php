@@ -77,9 +77,7 @@
                       <h5 class="text-uppercase font-weight-bold">Department Details</h5>
                     </div>
                     <div class="col-md-8"></div>
-                    <div class="col-md-1">
-                     <a type="button"  href="department/add" class="btn btn-primary btn-sm p-2">Add Depart</a>
-                    </div>
+                  
                   </div>
                   
                   

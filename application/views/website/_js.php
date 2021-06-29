@@ -101,33 +101,36 @@
             }
         })
     }
-    function deleted(id){
-        $.ajax({
-            type:'POST',
-            data:{'id':id,'table':'ps_website','columnName':'display_id','columnvalue':'0'},
-            dataType: 'JSON',
-            url: "<?=base_url()?>home/delete_response",
-            success:function(response){
-                var stringified = JSON.stringify(response);
-                var obj = JSON.parse(stringified);
-                if(obj[0].Type=='Error'){
-                    swal("Error","Action Not Perfomed ",'error')
-                }else{
-                    swal({
-                        title: "Are you sure?",
-                        text: "Once deleted, you will not be able to recover this imaginary file!",
-                        icon: "warning",
-                        buttons: true,
-                        dangerMode: true,
-                        }).then((willDelete) => {
-                        if (willDelete) {
-                            window.location = "<?=base_url()?>website";
-                        } else {
-                            swal("Your file is safe!");
+
+      function deleted(id){
+        swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                }).then((willDelete) => {
+                if (willDelete) {
+                     $.ajax({
+                        type:'POST',
+                      data:{'id':id,'table':'ps_website','columnName':'display_id','columnvalue':'0'},
+                        dataType: 'JSON',
+                        url: "<?=base_url()?>home/delete_response",
+                        success:function(response){
+                            var stringified = JSON.stringify(response);
+                            var obj = JSON.parse(stringified);
+                            if(obj[0].Type=='Error'){
+                                swal("Error","Action Not Perfomed ",'error')
+                            }else{
+                                swal("Website","Website Deleted ",'success')
+                            }
                         }
-                });
-            }
-            }
-        })
-    }
+                    })
+                } else {
+
+                    swal("Your imaginary file is safe!");
+                }
+                }); 
+}
+
 </script>
