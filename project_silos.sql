@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2021 at 08:00 PM
+-- Generation Time: Jun 30, 2021 at 06:17 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 7.4.14
 
@@ -872,29 +872,6 @@ INSERT INTO `ps_order_production_status` (`id`, `name`, `status_btn`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ps_order_support_status`
---
-
-CREATE TABLE `ps_order_support_status` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `status_btn` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `ps_order_support_status`
---
-
-INSERT INTO `ps_order_support_status` (`id`, `name`, `status_btn`) VALUES
-(1, 'Pending', 'badge-danger'),
-(2, 'Assigned', 'badge-primary'),
-(3, 'Submit', 'badge-warning'),
-(4, 'Complete', 'badge-success'),
-(5, 'Revision', 'badge-danger');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `ps_role`
 --
 
@@ -1192,12 +1169,6 @@ ALTER TABLE `ps_order_production_status`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ps_order_support_status`
---
-ALTER TABLE `ps_order_support_status`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `ps_role`
 --
 ALTER TABLE `ps_role`
@@ -1338,12 +1309,6 @@ ALTER TABLE `ps_order_main`
 --
 ALTER TABLE `ps_order_production_status`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `ps_order_support_status`
---
-ALTER TABLE `ps_order_support_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `ps_role`

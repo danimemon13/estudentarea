@@ -2243,7 +2243,7 @@ class Home extends CI_Controller {
 		$this->db->select("ps_ip_allowed.id as id,
 							ps_ip_allowed.ip,
 							ps_ip_allowed.created_at,
-							concat(ps_user_profile.first_name,' - ',ps_user_profile.last_name) as username
+							concat(ps_user_profile.first_name,ps_user_profile.last_name) as username
 						");
 		$this->db->from("ps_ip_allowed");
 		$this->db->join('ps_user_profile', 'ps_user_profile.id = ps_ip_allowed.added_by');
