@@ -85,25 +85,37 @@ $('#dep-form-edit').submit(function(e){
     })
 })
 
-function deleted(id){
-    $.ajax({
-        type:'POST',
-        data:{'id':id,'table':'ps_department','columnName':'status','columnvalue':'0'},
-        dataType: 'JSON',
-        url: "<?=base_url()?>home/delete_response",
-        success:function(response){
-            var stringified = JSON.stringify(response);
-            var obj = JSON.parse(stringified);
-            if(obj[0].Type=='Error'){
-                swal("Error","Action Not Perfomed ",'error')
-            }else{
-                swal('Department Deleted',"Department Deleted",'success').then(function() {
-            window.location = "<?=base_url()?>department";
-            });
-            }
-        }
-    })
+    function deleted(id){
+        swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                }).then((willDelete) => {
+                if (willDelete) {
+                     $.ajax({
+                        type:'POST',
+                       data:{'id':id,'table':'ps_department','columnName':'status','columnvalue':'0'},
+                        dataType: 'JSON',
+                        url: "<?=base_url()?>home/delete_response",
+                        success:function(response){
+                            var stringified = JSON.stringify(response);
+                            var obj = JSON.parse(stringified);
+                            if(obj[0].Type=='Error'){
+                                swal("Error","Action Not Perfomed ",'error')
+                            }else{
+                                swal("Department","Department Deleted ",'success')
+                            }
+                        }
+                    })
+                } else {
+
+                    swal("Your imaginary file is safe!");
+                }
+                }); 
 }
+
 
 
 

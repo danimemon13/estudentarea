@@ -65,9 +65,7 @@
                       <h5 class="text-uppercase font-weight-bold">Users Table</h5>
                     </div>
                     <div class="col-md-8"></div>
-                    <div class="col-md-1">
-                      <a type="button" href="add" class="btn btn-primary btn-sm p-2">Add User</a>    
-                    </div>
+                   
                   </div>
                   
                   

@@ -157,32 +157,33 @@ if($action == 'edit_order'){
         </div>    
         <div class="tab-pane fade" id="order_update_tab" role="tabpanel" aria-labelledby="home_order">
             <div class="form-group" style="margin: auto;">
-                <form autocomplete="off" id="update_revision_<?=$order_id;?>">
+                <form autocomplete="off" id="update_form">
                     <div class="form-group">
                         <label for="description" class="mr-1">Order update</label>
                         <select class="form-control" name="order_status" id="description" onChange="get_revision_value(this.value);">
                             <option>Select Option</option>
-                            <option value="6">Delivered</option>
-                            <option value="9">Revision</option>
+                            <option value="4">Delivered</option>
+                            <option value="5">Revision</option>
                             
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label for="description" class="mr-1">Comments</label>
                         <textarea class="form-control" name="comments" id="description" placeholder="Enter Comments" rows="5"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="description" class="mr-1">File</label>
-                        <input id="file_r" name="file[]" multiple type="file" class="form-control" />
+                        <input id="file_rrr" name="file[]" multiple type="file" class="form-control" />
                     </div>
                     <div class="form-group">
                         <div class="progress mb-3">
                             <div id="progress_revision_<?=$order_id;?>" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <button type="button" onClick="order_revision(this.id)" id="<?=$order_id;?>" class="btn btn-primary col-md-4 col-lg-4 col-xs-12 col-sm-12">Save</button>
+                      <div class="form-group">
+                        <input type="text" name="id" value="<?=$order_id?>" style="display:none;"/>
+                        <input type="text" name="action" value="update_order" style="display:none;"/>
+                        <button type="submit" class="pull-right btn btn-primary btn-block">Save</button>
                     </div>
                 </form>
             </div>
@@ -196,8 +197,6 @@ if($action == 'edit_order'){
                 action_res('Change Team',data,'','');
             });
          $("#comment_form").submit(function(e){
-    
-                
                 e.preventDefault();
                 var data = $("#comment_form").serializeArray();    
                 var fd = new FormData();
@@ -206,18 +205,13 @@ if($action == 'edit_order'){
                     fd.append("file_" + i, file_data[i]);
                 }
     
-                
-    
                 $.each(data,function(key,input){
                     fd.append(input.name,input.value);
                 });
                 action_res_img('Add',fd,'','');
             });
 
-
          $("#submit_form").submit(function(e){
-    
-                
                 e.preventDefault();
                 var data = $("#submit_form").serializeArray();    
                 var fd = new FormData();
@@ -225,9 +219,6 @@ if($action == 'edit_order'){
                 for (var i = 0; i < file_data.length; i++) {
                     fd.append("file_" + i, file_data[i]);
                 }
-    
-                
-    
                 $.each(data,function(key,input){
                     fd.append(input.name,input.value);
                 });
@@ -235,15 +226,20 @@ if($action == 'edit_order'){
             });
 
 
-        $("#status-form").submit(function(e){
-                    e.preventDefault();
-                    var data = $("#status-form").serializeArray();
-                    // console.log(data);
-                    action_res('Change Status',data,'','');
+        $("#update_form").submit(function(e){
+                e.preventDefault();
+                var data = $("#update_form").serializeArray();    
+                var fd = new FormData();
+                var file_data = $('#file_rrr')[0].files
+                for (var i = 0; i < file_data.length; i++) {
+                    fd.append("file_" + i, file_data[i]);
+                }
+                $.each(data,function(key,input){
+                    fd.append(input.name,input.value);
                 });
-    
+                action_res_img('Add',fd,'','');
+            });
          
-
         </script>
     </div>
     

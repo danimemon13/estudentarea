@@ -65,9 +65,7 @@
                       <h5 class="text-uppercase font-weight-bold">Team Details</h5>
                     </div>
                     <div class="col-md-8"></div>
-                    <div class="col-md-1">
-                      <a type="button"  href="team/add" class="btn btn-primary btn-sm p-2">Add Team</a>
-                    </div>
+                   
                   </div>
                   
                   
