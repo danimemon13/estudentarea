@@ -348,24 +348,35 @@ $('#mandator_select').on('change', function() {
     }  
 });
 
-function deleted(id){
-    $.ajax({
-        type:'POST',
-        data:{'id':id,'table':'ps_user_login','columnName':'status','columnvalue':'0'},
-        dataType: 'JSON',
-        url: "<?=base_url()?>home/delete_response",
-        success:function(response){
-            var stringified = JSON.stringify(response);
-            var obj = JSON.parse(stringified);
-            if(obj[0].Type=='Error'){
-                swal("Error","Action Not Perfomed ",'error')
-            }else{
-                swal('User Deleted',"User Deleted",'success').then(function() {
-            window.location = "<?=base_url()?>user";
-            });
-            }
-        }
-    })
+  function deleted(id){
+        swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                }).then((willDelete) => {
+                if (willDelete) {
+                     $.ajax({
+                        type:'POST',
+                       data:{'id':id,'table':'ps_user_login','columnName':'status','columnvalue':'0'},
+                        dataType: 'JSON',
+                        url: "<?=base_url()?>home/delete_response",
+                        success:function(response){
+                            var stringified = JSON.stringify(response);
+                            var obj = JSON.parse(stringified);
+                            if(obj[0].Type=='Error'){
+                                swal("Error","Action Not Perfomed ",'error')
+                            }else{
+                                swal("User","User Deleted ",'success')
+                            }
+                        }
+                    })
+                } else {
+
+                    swal("Your imaginary file is safe!");
+                }
+                }); 
 }
 
 </script>

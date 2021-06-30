@@ -26,9 +26,9 @@ if($action == 'edit'){
                 <a class="nav-link" id="contact-tab" title="own" data-toggle="tab" href="#own_tab" role="tab" aria-controls="contact5" aria-selected="false">Ownership</a>
             </li>
         
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" id="contact-tab" title="change-own" data-toggle="tab" href="#own_change" role="tab" aria-controls="contact5" aria-selected="false">Change Owner</a>
-            </li>
+            </li> -->
     </ul>
     <div class="tab-content" id="myTabContent" style="border: 1px solid #dddddd;">
             <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="home-tab" id="comments_tab" >

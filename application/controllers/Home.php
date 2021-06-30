@@ -25,19 +25,46 @@ class Home extends CI_Controller {
 		$data['login'] = $this->Home_models->selectrecords('ps_user_login',$userArray);
 		$return_arr = array();
 		if(!empty($data['login'])){
-			//success
-			$return_arr[] = array("Type" => "Success","Error_type" => "login","msg"=>"User Is Available");
-			$fk_id = $data['login'][0]['id'];
-			$array = array('fk_parent_id'=>$fk_id);
-			$data['profile'] = $this->Home_models->selectrecords('ps_user_profile',$array);
-		
-			$this->session->set_userdata("user_basis",$data['login']);
-			$this->session->set_userdata("user_profile",$data['profile']);
-			$this->session->set_userdata("is_login","1");
-			
-			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
-			$message = $username." is Logged in";
-			$this->create_logs('Login Area',$message);
+			if($data['login'][0]['status'] == 0){
+				$return_arr[] = array("Type" => "Error","Error_type" => "login","msg"=>"Your Account Has Been Blocked By CRM Team");
+			}else{
+				//check ip ::1	
+				if($data['login'][0]['ip_allow'] == 0){
+					if(!$this->check_ip()){
+						$return_arr[] = array("Type" => "Error","Error_type" => "login","msg"=>"You Don't Have OutSide Access");
+					}
+					else{
+						//success
+						$return_arr[] = array("Type" => "Success","Error_type" => "login","msg"=>"User Is Available");
+						$fk_id = $data['login'][0]['id'];
+						$array = array('fk_parent_id'=>$fk_id);
+						$data['profile'] = $this->Home_models->selectrecords('ps_user_profile',$array);
+					
+						$this->session->set_userdata("user_basis",$data['login']);
+						$this->session->set_userdata("user_profile",$data['profile']);
+						$this->session->set_userdata("is_login","1");
+	
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Logged in";
+						$this->create_logs('Login Area',$message);
+					}
+				}
+				else{
+						//success
+						$return_arr[] = array("Type" => "Success","Error_type" => "login","msg"=>"User Is Available");
+						$fk_id = $data['login'][0]['id'];
+						$array = array('fk_parent_id'=>$fk_id);
+						$data['profile'] = $this->Home_models->selectrecords('ps_user_profile',$array);
+					
+						$this->session->set_userdata("user_basis",$data['login']);
+						$this->session->set_userdata("user_profile",$data['profile']);
+						$this->session->set_userdata("is_login","1");
+	
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Logged in";
+						$this->create_logs('Login Area',$message);
+				}
+			}
 		}
 		else{
 			$return_arr[] = array("Type" => "Error","Error_type" => "login","msg"=>"Invalid User Name or Password");
@@ -117,6 +144,9 @@ class Home extends CI_Controller {
 		$this->load->view('import');
     }
     public function logout(){
+		$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+		$message = $username." is Logged Out";
+		$this->create_logs('Login Area',$message);
     	$this->session->unset_userdata('is_login');
 		$this->session->sess_destroy();
 		redirect('home', 'refresh');
@@ -149,6 +179,9 @@ class Home extends CI_Controller {
 	    echo $response;
 
     }
+
+
+	
     /************** Global Function ******************/
 	public function getallData(){
         $ID = $_POST["ID"];
@@ -201,7 +234,7 @@ class Home extends CI_Controller {
 		}
         // $this->load->view('email_form');
     }
-	public	function delete_response() {
+	public function delete_response() {
 		$id = $_POST['id'];
 		$table = $_POST['table'];
 		$columnName = $_POST['columnName'];
@@ -210,13 +243,24 @@ class Home extends CI_Controller {
 		$update = $this->Home_models->delete_globle($table,$id,$display_data);
 		$return_arr = array();
 		if ($update > 0) {
+			/*********************Logs*************************/
+			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+			$message = $username." is Deleted Column ".$columnName." On Id ".$id;
+			$this->create_logs("Deleted ".$table.' Area',$message);
+			 /*********************Logs End*************************/
 			$return_arr[] = array("Type" => "Success", "Error_type" => "Team", "msg" => "Data Success Fully Updated");
 		} else {
 			$return_arr[] = array("Type" => "Error", "Error_type" => "Team", "msg" => "Server Error");
 		}
 		echo json_encode($return_arr);
 	}
+	public function check_ip(){
+		$filter_ip['ip'] = $this->input->ip_address();
+		$get_rows = $this->Home_models->selectrecords('ps_ip_allowed',$filter_ip);
+		return count($get_rows) > 0 ? true : false;
+	}
 	
+
 
 	/************** Department ******************/
 	public function department(){
@@ -271,7 +315,10 @@ class Home extends CI_Controller {
 		$array = $_POST;
 		$addepartment = $this->Home_models->saverecords('ps_department',$array);
 		$return_arr = array();
-		if($addepartment>0){			
+		if($addepartment>0){	
+			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+			$message = $username." is Added New Department";
+			$this->create_logs('Department Area',$message);			
 			$return_arr[] = array("Type" => "Success","Error_type" => "department","msg"=>"Data Success Fully Inserted");
 		}else{
 			$return_arr[] = array("Type" => "Error","Error_type" => "department","msg"=>"Server Error");
@@ -288,17 +335,40 @@ class Home extends CI_Controller {
 	}
 	public function department_edit_response(){
 		$id= $this->input->post('id');
-		$editData['name'] = $this->input->post('name');
-		$editData['fk_team_id'] = $this->input->post('fk_team_id');
+		$editData['name'] = $this->input-> post('name');
+        $editData['fk_team_id'] = $this->input->post('fk_team_id');
+        /*********************Logs*************************/
+		$this->db->select("*");
+		$this->db->from("ps_department");
+		$this->db->where('ps_department.id', $id);
+		$prev = $this->db->get()->result();
+		$prev_data = (array) $prev[0];
+		/*********************Logs*************************/
 		$update = $this->Home_models->update_globl('ps_department',$id,$editData);
 		$return_arr = array();
 		if($update>0){
+		$id= $this->input->post('id');
+		$this->db->select("*");
+		$this->db->from("ps_department");
+		$this->db->where('ps_department.id', $id);
+		$updated= $this->db->get()->result();
+		$updated_data = (array) $updated[0];
+	    $newValues=array_diff_assoc($updated_data,$prev_data);
+		$oldValues=array_diff_assoc($prev_data,$updated_data);
+		 foreach ($newValues as $key => $value) {
+					$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+                    $message = $username." Updated ".$key." From ".$oldValues[$key]." To ".$value;
+                    $this->create_logs('Department Area',$message);
+                }
+         /*********************Logs End*************************/
 			$return_arr[] = array("Type" => "Success","Error_type" => "Department","msg"=>"Data Success Fully Updated");
 		}else{
 			$return_arr[] = array("Type" => "Error","Error_type" => "Department","msg"=>"Server Error");
 		}
 		echo json_encode($return_arr);
     }
+
+
 
 	/************** Team ******************/
 	public function team(){
@@ -355,6 +425,9 @@ class Home extends CI_Controller {
 		$addepartment = $this->Home_models->saverecords('ps_team',$array);
 		$return_arr = array();
 		if($addepartment>0){
+			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+			$message = $username." is Added New Team";
+			$this->create_logs('Team Area',$message);
 			$return_arr[] = array("Type" => "Success","Error_type" => "department","msg"=>"Data Success Fully Inserted");
 		}else{
 			$return_arr[] = array("Type" => "Error","Error_type" => "department","msg"=>"Server Error");
@@ -370,7 +443,16 @@ class Home extends CI_Controller {
 	}
 	public function team_edit_response() {
 		$id = $this->input->post('id');
+		$this->db->select("*");
+		$this->db->from("ps_team");
+		$this->db->where('ps_team.id', $id);
+		$query = $this->db->get()->result();
+		$last_team_name=$query[0]->name;
 		$editData['name'] = $this->input-> post('name');
+		$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+		$message = $username." is Updated From " .$last_team_name." to ".$editData['name'];
+		$this->create_logs('Team Area',$message);
+
 		$update = $this->Home_models->update_globl('ps_team',$id,$editData);
 		$return_arr = array();
 		if ($update > 0) {
@@ -380,6 +462,7 @@ class Home extends CI_Controller {
 		}
 		echo json_encode($return_arr);
 	}
+
 
 
 	/************** Role ******************/
@@ -440,6 +523,11 @@ class Home extends CI_Controller {
 		$adderole = $this->Home_models->saverecords('ps_role',$array);
 		$return_arr = array();
 		if($adderole>0){
+			/************** Logs ******************/
+			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+			$message = $username." is Added New Role";
+			$this->create_logs('Role Area',$message);
+			/**************Ends Logs ******************/
 			$data['menu'] = $this->Home_models->selectrecords('ps_menu');
 			foreach($data['menu'] as $menu){
 				$menu_id = $menu['id'];
@@ -465,15 +553,37 @@ class Home extends CI_Controller {
 		$id= $this->input->post('id');
 		$editData['name'] = $this->input->post('name');
 		$editData['depart_id'] = $this->input->post('depart_id');
+		/*********************Logs*************************/
+		$this->db->select("*");
+		$this->db->from("ps_role");
+		$this->db->where('ps_role.id', $id);
+		$prev = $this->db->get()->result();
+		$prev_data = (array) $prev[0];
 		$update = $this->Home_models->update_globl('ps_role',$id,$editData);
 		$return_arr = array();
 		if($update>0){
+		$id= $this->input->post('id');
+		$this->db->select("*");
+		$this->db->from("ps_role");
+		$this->db->where('ps_role.id', $id);
+		$updated= $this->db->get()->result();
+		$updated_data = (array) $updated[0];
+	    $newValues=array_diff_assoc($updated_data,$prev_data);
+		$oldValues=array_diff_assoc($prev_data,$updated_data);
+		 foreach ($newValues as $key => $value) {
+					$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+                    $message = $username." Updated ".$key." From ".$oldValues[$key]." To ".$value;
+                    $this->create_logs('Role Area',$message);
+                }
+         /*********************Logs End*************************/
 			$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
 		}else{
 			$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
 		}
 		echo json_encode($return_arr);
 	}
+
+
 
 	/************** User ******************/
 	public function user(){
@@ -545,8 +655,12 @@ class Home extends CI_Controller {
 			$user_ip_status = $r->ip_allow == 0 ? 'danger' : 'success';
 			$user_ip_status_text = $r->ip_allow == 0 ? 'Inactive' : 'Active';
 			$ipAllow = '<span class="badge badge-'.$user_ip_status.' es-label " style="font-size : 13px">'.$user_ip_status_text.'</span>';
+
+			$id = '<button onclick="copyToClipboard(this.id)" id='.$r->id.' class="btn btn-primary btn-sm">ID</button>';
+
 			$data[] = array(
                 ++$count,
+				$id,
                 $username_r,
                 $username_s,
                 $r->user_role,
@@ -618,6 +732,9 @@ class Home extends CI_Controller {
 				$adduser2 = $this->Home_models->saverecords('ps_user_profile',$userArray2);
 				// echo $this->db->last_query();
 				if($adduser2 > 0){
+					$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+					$message = $username." is Added New User";
+					$this->create_logs('User Area',$message);
 					$return_arr[] = array("Type" => "Success","Error_type" => "department","msg"=>"Data Success Fully Inserted");
 				}else{
 					$return_arr[] = array("Type" => "Error","Error_type" => "department","msg"=>"Server Error");
@@ -659,6 +776,21 @@ class Home extends CI_Controller {
 		$user_id 			= $_POST['user_id'];
 		$allow_ip = !isset($_POST['allow_ip']) ? '0' : '1';
 		$is_active = !isset($_POST['status']) ? '0' : '1';
+		/*********************Logs*************************/
+		/*********************get user login data*************************/
+		$this->db->select("*");
+		$this->db->from("ps_user_login");
+		$this->db->where('ps_user_login.id', $user_id);
+		$prev1 = $this->db->get()->result();
+		$prev_data1 = (array) $prev1[0];
+		/*********************get user profile data*************************/
+		$this->db->select("*");
+		$this->db->from("ps_user_profile");
+		$this->db->where('ps_user_profile.id', $user_id);
+		$prev2 = $this->db->get()->result();
+		$prev_data2 = (array) $prev2[0];
+
+		/*********************Logs*************************/
 		if($password == ''){
 			$data = array(
 				'user_name' => $user_name,
@@ -700,7 +832,34 @@ class Home extends CI_Controller {
 
 		$this->db->where('fk_parent_id', $user_id);
 		$this->db->update('ps_user_profile', $data1);
-		
+			/*********************Logs user login get after update*************************/
+			$this->db->select("*");
+			$this->db->from("ps_user_login");
+			$this->db->where('ps_user_login.id', $user_id);
+			$updated1= $this->db->get()->result();
+			$updated_data1 = (array) $updated1[0];
+			$newValues1=array_diff_assoc($updated_data1,$prev_data1);
+			$oldValues1=array_diff_assoc($prev_data1,$updated_data1);
+			 foreach ($newValues1 as $key1 => $value1) {
+						$username1 = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message1 = $username1." Updated ".$key1." From ".$oldValues1[$key1]." To ".$value1;
+						$this->create_logs('User Area',$message1);
+					}
+			  /*********************Logs user Profile get after update*************************/      
+			 $this->db->select("*");
+			$this->db->from("ps_user_profile");
+			$this->db->where('ps_user_profile.id', $user_id);
+			$updated2= $this->db->get()->result();
+			$updated_data2 = (array) $updated2[0];
+			$newValues2=array_diff_assoc($updated_data2,$prev_data2);
+			$oldValues2=array_diff_assoc($prev_data2,$updated_data2);
+			 foreach ($newValues2 as $key2 => $value2) {
+						$username2 = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message2 = $username2." Updated ".$key2." From ".$oldValues2[$key2]." To ".$value2;
+						$this->create_logs('User Area',$message2);
+					}
+			 /*********************Logs End*************************/
+	
 		$return_arr[] = array("Type" => "Success","Error_type" => "User","msg"=>"Data Success Fully Updated");
 
 		echo json_encode($return_arr);
@@ -714,21 +873,47 @@ class Home extends CI_Controller {
 	public function user_team_response(){
 		$action = $_POST['action'];
 		$team_lead_id = $_POST['team_lead_id'];
-		
 		$get_current_team_lead_manger['fk_parent_id'] = $team_lead_id;
 		$get_manager = $this->Home_models->selectrecords('ps_user_profile',$get_current_team_lead_manger);
 		$manager_id = $get_manager[0]['manager'];
 		if($action == 'update_team_lead'){
 			$update_array = array('team_lead'=>$team_lead_id,'manager'=>$manager_id);
+			foreach($_POST['users'] as $user_id){
+				$create_user_ids = $user_id;
+				$this->db->where('fk_parent_id', $create_user_ids);
+				$this->db->update('ps_user_profile', $update_array);
+			}
+			$return_arr[] = array("Type" => "Success","Error_type" => "User","msg"=>"User Assigned");
+			echo json_encode($return_arr);
+			die();
 		}else if($action == 'update_manager'){
+
 			$update_array = array('manager'=>$_POST['team_lead_id']);
+
+			foreach($_POST['users'] as $team_lead_id){
+
+				$get_users['team_lead'] = $team_lead_id;
+				$team_lead_array = array('manager'=>$_POST['team_lead_id']);
+				$get_team_lead = $this->Home_models->selectrecords('ps_user_profile',$get_users);
+
+				foreach($get_team_lead as $user){
+					$create_inner_user_id = $user['fk_parent_id'];
+					$this->db->where('fk_parent_id', $create_inner_user_id);
+					$this->db->update('ps_user_profile', $team_lead_array);
+				}
+				
+
+				$create_user_ids = $team_lead_id;
+				$this->db->where('fk_parent_id', $create_user_ids);
+				$this->db->update('ps_user_profile', $update_array);
+			}
+
 		}
-		
-		foreach($_POST['users'] as $user_id){
-			$create_user_ids = $user_id;
-			$this->db->where('fk_parent_id', $create_user_ids);
-			$this->db->update('ps_user_profile', $update_array);
-		}
+		/*********************Logs*************************/
+		$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+		$message = $username." is Updated User Team On User Id ".$team_lead_id;
+		$this->create_logs('User Area',$message);
+		 /*********************Logs End*************************/
 		$return_arr[] = array("Type" => "Success","Error_type" => "User","msg"=>"User Assigned");
 		echo json_encode($return_arr);
 	}
@@ -742,6 +927,11 @@ class Home extends CI_Controller {
 	}
 	public function user_website_assign_response(){
 		$id = $this->input->post('id');
+		/*********************Logs*************************/
+		$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+		$message = $username." is Updated Assign Website On User Id = ".$id;
+		$this->create_logs('User Area',$message);
+		 /*********************Logs End*************************/
 		$web_id= $this->input->post('name');
 		$exe_count = 1;
 		foreach($web_id as $webid) {
@@ -795,12 +985,18 @@ class Home extends CI_Controller {
 		}
 		$return_arr = array();
 		if($addwebsite>0){
+			/*********************Logs*************************/
+			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+			$message = $username." is Updated Remove Website On User Id = ".$user_id ;
+			$this->create_logs('User Area',$message);
+			/*********************Logs End*************************/
 		 	$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
 		}else{
 		 	$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
 		}
 		echo json_encode($return_arr);
 	}
+
 
 
 	/************** Leads ******************/
@@ -947,6 +1143,11 @@ class Home extends CI_Controller {
 					);
 					$lead_history_add = $this->Home_models->saverecords('ps_leads_history',$lead_history_table);
 					if($lead_history_add > 0){
+						/*********************Logs*************************/
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Added New Lead";
+						$this->create_logs('Lead Area',$message);
+						/*********************Logs End*************************/
 						$return_arr[] = array("Type" => "Success","Error_type" => "lead","msg"=>"Lead Successfully Created");
 					}else{
 						$return_arr[] = array("Type" => "Error","Error_type" => "lead","msg"=>"Lead History Error");
@@ -987,13 +1188,20 @@ class Home extends CI_Controller {
 				'lead_status' => $status,
 				'created_by' => $_SESSION['user_profile'][0]['id']
 			);
-			
-			
 			$add_comments = $this->Home_models->saverecords('ps_leads_history',$commments_form_array);
 			if($add_comments>0){
 				$this->db->where('id', $lead_id);
 				$this->db->update('ps_leads', $lead_data);
-
+				/*********************Logs*************************/
+				$this->db->select("*");
+				$this->db->from("ps_leads");
+				$this->db->where('ps_leads.id', $lead_id);
+				$query = $this->db->get()->result();
+				$l_code=$query[0]->lead_code;
+				$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+				$message = $username." is Added comments On ".$l_code;
+				$this->create_logs('Leads Area',$message);
+				 /*********************Logs End*************************/
 				echo "1";
 			}else{
 				echo "0";
@@ -1015,6 +1223,16 @@ class Home extends CI_Controller {
 			);
 			$add_comments = $this->Home_models->saverecords('ps_leads_history',$commments_form_array);
 			if($add_comments>0){
+				/*********************Logs*************************/
+				$this->db->select("*");
+				$this->db->from("ps_leads");
+				$this->db->where('ps_leads.id', $lead_id);
+				$query = $this->db->get()->result();
+				$l_code=$query[0]->lead_code;
+				$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+				$message = $username." is Added Ownership Comment On ".$l_code;
+				$this->create_logs('Leads Area',$message);
+				 /*********************Logs End*************************/
 				echo "1";
 			}else{
 				echo "0";
@@ -1080,6 +1298,16 @@ class Home extends CI_Controller {
 					);
 					$lead_history_add = $this->Home_models->saverecords('ps_leads_history',$lead_history_table);
 					if($lead_history_add > 0){
+						/*********************Logs*************************/
+						$this->db->select("*");
+						$this->db->from("ps_leads");
+						$this->db->where('ps_leads.id', $lead_id);
+						$query = $this->db->get()->result();
+						$l_code=$query[0]->lead_code;
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Added Add Chat Comment & File On ".$l_code;
+						$this->create_logs('Leads Area',$message);
+						 /*********************Logs End*************************/
 						echo '1';
 					}else{
 						echo '0';
@@ -1097,6 +1325,7 @@ class Home extends CI_Controller {
 
 
 
+	
 	/************** Websites ******************/
 	public function website(){
 		$data['menu'] = $this->MenuModel->category_menu(1);
@@ -1202,6 +1431,11 @@ class Home extends CI_Controller {
 				$return_arr = array();
 				if($addwebsite>0)
 				{
+						/*********************Logs*************************/
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Added New Website";
+						$this->create_logs('Website Area',$message);
+						/*********************Logs End*************************/
 					$return_arr[] = array("Type" => "Success","Error_type" => "Website","msg"=>"Data Success Fully Inserted");
 				}
 				else
@@ -1226,6 +1460,16 @@ class Home extends CI_Controller {
 			$update= $this->db->update('ps_website', $editData);
 			$return_arr = array();
 			if($update>0){
+			    /*********************Logs*************************/
+				$this->db->select("*");
+				$this->db->from("ps_website");
+				$this->db->where('ps_website.id',$id);
+				$query = $this->db->get()->result();
+				$w_id=$query[0]->id;
+				$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+				$message = $username." is Added Change Team On Website Id = ".$w_id;
+				$this->create_logs('Website Area',$message);
+				/*********************Logs End*************************/
 				$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
 			}else{
 				$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
@@ -1238,6 +1482,16 @@ class Home extends CI_Controller {
 			$update= $this->db->update('ps_website',$editData);
 			$return_arr = array();
 			if($update>0){
+				 /*********************Logs*************************/
+				$this->db->select("*");
+				$this->db->from("ps_website");
+				$this->db->where('ps_website.id',$id);
+				$query = $this->db->get()->result();
+				$w_id=$query[0]->id;
+				$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+				$message = $username." is Added Change Type On Website Id = ".$w_id;
+				$this->create_logs('Website Area',$message);
+				/*********************Logs End*************************/
 				$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data SuccessFully Updated");
 			}else{
 				$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
@@ -1251,6 +1505,16 @@ class Home extends CI_Controller {
 		
 			$return_arr = array();
 			if($update>0){
+			/*********************Logs*************************/
+			$this->db->select("*");
+			$this->db->from("ps_website");
+			$this->db->where('ps_website.id',$id);
+			$query = $this->db->get()->result();
+			$w_id=$query[0]->id;
+			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+			$message = $username." is Added Change Status On Website Id = ".$w_id;
+			$this->create_logs('Website Area',$message);
+			/*********************Logs End*************************/
 				$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data SuccessFully Updated");
 			}else{
 				$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
@@ -1291,8 +1555,8 @@ class Home extends CI_Controller {
 		pt.id as team_id,
 		pt.name as team_name,
 		pup.id as user_id,
-		pup.first_name,
-		pup.last_name
+		Concat(pup.first_name,' - ',pup.last_name) as username
+		
 		");
 		$this->db->from("ps_invoice_basic as inv");
 		$this->db->join('ps_leads as ld', 'ld.id= inv.lead_id');
@@ -1324,7 +1588,7 @@ class Home extends CI_Controller {
 				$r->lead_code,
 				$r->created_at,
 				$r->amount."-".$r->currency,
-				$r->first_name,
+				$r->username,
 				$in_status,
 				$r->website,
 				$btn 
@@ -1373,6 +1637,11 @@ class Home extends CI_Controller {
 					);
 			$addivoice = $this->Home_models->saverecords('ps_invoice_basic',$invArray);
 			if($addivoice >0){
+				/*********************Logs*************************/
+				$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+				$message = $username." is Added New Invoice";
+				$this->create_logs('Invoice Area',$message);
+				/*********************Logs End*************************/
 				$data = json_decode($_POST['invoice_detail']);    
 				$pdf_content;
 				$count = 0;
@@ -1532,11 +1801,29 @@ class Home extends CI_Controller {
 		$this->load->view('invoice/tab',$send_array);
 	}
 	public function invoice_action_response(){
+		$userid  = $_SESSION['user_profile'][0]['fk_parent_id'];
+		$username = $_SESSION['user_profile'][0]['first_name']." - ". $_SESSION['user_profile'][0]['last_name'];
+
 		$id= $_POST['inv_id'];
 		$amount['amount']  = $_POST['amount']."".$_POST['point_amount'];
 		$this->Home_models->update_globl('ps_invoice_basic',$id,$amount);
+		$track['invoice_id']  = $id;
+		$track['user_id']  = $userid;
+		$track['message']  = $username. " Updated Amount ". $_POST['amount']."".$_POST['point_amount'];
+		$this->Home_models->saverecords('ps_invoice_history',$track);
+		/*********************Logs*************************/
+		$this->db->select("*");
+		$this->db->from("ps_invoice_basic");
+		$this->db->where('ps_invoice_basic.id', $id);
+		$query = $this->db->get()->result();
+		$inv_code=$query[0]->invoice_no;
+		$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+		$message = $username." is Updated Amount On ".$inv_code;
+		$this->create_logs('Invoice Area',$message);
+		/*********************Logs End*************************/
 		echo '1';
 	}
+
 
 
 	/************** Orders ******************/
@@ -1637,6 +1924,16 @@ class Home extends CI_Controller {
 			if($update_order_child>0) {
 			$add_order_history = $this->Home_models->saverecords('ps_order_history',$Array1);
 				if($add_order_history>0){
+					/*********************Logs*************************/
+					$this->db->select("*");
+					$this->db->from("ps_order_main");
+					$this->db->where('ps_order_main.id', $id );
+					$query = $this->db->get()->result();
+					$O_code=$query[0]->order_code;
+					$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+					$message = $username." is Added Assign Order On ".$O_code;
+					$this->create_logs('Order Area',$message);
+					/*********************Logs End*************************/
 					$return_arr[] = array("Type" => "Success","Error_type" => "Role","msg"=>"Data Success Fully Updated");
 				}else{
 					$return_arr[] = array("Type" => "Error","Error_type" => "Role","msg"=>"Server Error");
@@ -1703,6 +2000,16 @@ class Home extends CI_Controller {
 					);
 					$order_history_add = $this->Home_models->saverecords('ps_order_history',$order_history_table);
 					if($order_history_add > 0){
+						/*********************Logs*************************/
+						$this->db->select("*");
+						$this->db->from("ps_order_main");
+						$this->db->where('ps_order_main.id', $id );
+						$query = $this->db->get()->result();
+						$O_code=$query[0]->order_code;
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Added Comment Order On ".$O_code;
+						$this->create_logs('Order Area',$message);
+						/*********************Logs End*************************/
 						echo '1';
 					}else{
 						echo '0';
@@ -1775,6 +2082,16 @@ class Home extends CI_Controller {
 					);
 					$order_history_add = $this->Home_models->saverecords('ps_order_history',$order_history_table);
 					if($order_history_add > 0){
+						/*********************Logs*************************/
+						$this->db->select("*");
+						$this->db->from("ps_order_main");
+						$this->db->where('ps_order_main.id', $id );
+						$query = $this->db->get()->result();
+						$O_code=$query[0]->order_code;
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Added Submit Order On ".$O_code;
+						$this->create_logs('Order Area',$message);
+						/*********************Logs End*************************/
 						echo '1';
 					}else{
 						echo '0';
@@ -1782,7 +2099,92 @@ class Home extends CI_Controller {
        		}
 				
 				}
-		}
+		}else if($action == 'update_order'){	
+			$filter['id']= $id;
+			$row_order_history = $this->Home_models->selectrecords('ps_order_child',$filter);
+			$order_status= $this->input->post('order_status');
+			$comments= $this->input->post('comments');
+			$assign_by=$_SESSION['user_profile'][0]['id'];
+			$lead_code_filter = array('order_id	' => $id, 'files!=' => '');
+			$this->db->select('count(*) as count');
+			$this->db->from("ps_order_history");
+			$this->db->where($lead_code_filter);
+			$query = $this->db->get()->result();
+			$history_count = $query[0]->count;
+			$file_name  = $history_count == 0 ? 1 : $history_count +1 ;
+			$new_code = $row_order_history[0]['view_code'].'-'.$file_name;
+			$receipt_path = '';
+			if(!empty($_FILES)){
+				$config['upload_path'] = 'uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['file_name'] = $new_code;
+				$this->load->library('upload', $config);
+				$count = count($_FILES);
+				if($count == 1){
+					foreach ($_FILES as $f => $name){
+						if($this->upload->do_upload($f)){
+							$receipt_path = $config['upload_path']."".$config['file_name']."".$this->upload->data()['file_ext'];
+							// print_r($this->upload->data());
+							// echo "Your File Uploaded".$receipt_path;
+							// die();
+						}else{
+							print_r($this->upload->display_errors());
+						}
+					}
+				}
+				if($count > 1){
+					$zip = new ZipArchive(); 
+					$f1 = mt_rand(0,1);
+					$f2 = mt_rand(0,1);
+					// $receipt_path = "../uploads/$f1/".$new_code.".zip";
+					$receipt_path = "uploads/".$new_code.".zip";
+					if($zip->open($receipt_path, ZipArchive::CREATE) !== TRUE) {
+						$error .= "* Sorry ZIP creation failed at this time<br/>";
+					}
+					foreach($_FILES as $k => $value) {
+						if($value == '') { // not empty field
+							continue;
+						}
+						$zip->addFromString($value['name'], file_get_contents($value['tmp_name']));
+					}
+					$zip->close();
+				}
+				$Array = array(	
+						'production_status'=>$order_status,
+						'support_status'=>$order_status
+					);
+	             $this->db->where('id', $id);
+		       $update_order_child= $this->db->update('ps_order_child', $Array);
+
+		       if($update_order_child>0) {
+		       	/*********************Logs*************************/
+					$this->db->select("*");
+					$this->db->from("ps_order_main");
+					$this->db->where('ps_order_main.id', $id );
+					$query = $this->db->get()->result();
+					$O_code=$query[0]->order_code;
+					$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+					$message = $username." is Added Update Order On ".$O_code;
+					$this->create_logs('Order Area',$message);
+					 /*********************Logs End*************************/
+
+       	 			$order_history_table = array(
+						'order_id'=>$id,
+						'comment'=>$comments,
+						'added_by'=>$assign_by,
+						'files' =>$receipt_path,
+						'status'=>'1',
+					);
+					$order_history_add = $this->Home_models->saverecords('ps_order_history',$order_history_table);
+					if($order_history_add > 0){
+						echo '1';
+					}else{
+						echo '0';
+					}
+       		}
+				
+				}
+			}
 	}
 	public function order_add(){
 		$this->load->view('order/add');
@@ -1825,6 +2227,96 @@ class Home extends CI_Controller {
 				"data" => $data
 			);
 		echo json_encode($result);
+	}
+
+	
+	/************** Ip ******************/
+	public function ip_address(){
+		$data['menu'] = $this->MenuModel->category_menu(1);
+		$this->load->template('ip_address/index',$data);
+		$this->load->view('ip_address/_js');
+	}
+	public function ip_address_response(){
+		$draw 	= intval($this->input->get("draw"));
+		$start 	= intval($this->input->get("start"));
+		$length 	= intval($this->input->get("length"));
+		$this->db->select("ps_ip_allowed.id as id,
+							ps_ip_allowed.ip,
+							ps_ip_allowed.created_at,
+							concat(ps_user_profile.first_name,' - ',ps_user_profile.last_name) as username
+						");
+		$this->db->from("ps_ip_allowed");
+		$this->db->join('ps_user_profile', 'ps_user_profile.id = ps_ip_allowed.added_by');
+		$this->db->where('ps_ip_allowed.status != ','0');
+		$this->db->order_by("ps_user_profile.id","desc"); 
+		$query = $this->db->get();
+		$data = [];
+
+		$count=0;     
+		foreach($query->result() as $r) {
+				$btn = '<div class="btn-group" data-toggle="buttons">'; 
+				$btn .= '<a href="'.base_url().'ip_address/edit/'.$r->id.'" class="btn btn-primary btn-icon">';
+				$btn .= '<i class="fa fa-pencil-alt"></i>';
+				$btn .= '</a>';
+				$btn .= '<button onclick="deleted(this.id)" id='.$r->id.' class="btn btn-danger btn-icon"><i class="fa fa-trash"></i></button>';
+				$btn .= '</div>';
+				
+				$data[] = array(
+					++$count,
+					$r->ip,
+					$r->username,
+					// $r->created_at,
+					$btn
+			);
+		}
+
+
+      	$result = array(
+               "draw" => $draw,
+				"recordsTotal" => $query->num_rows(),
+				"recordsFiltered" => $query->num_rows(),
+				"data" => $data
+		);
+
+
+      echo json_encode($result);
+	}
+	public function ip_address_add(){
+		$data['role'] = $this->Home_models->selectrecords('ps_role');
+		$data['team'] = $this->Home_models->selectrecords('ps_team');
+		$data['menu'] = $this->MenuModel->category_menu(1);
+		$this->load->template('ip_address/add',$data);
+    	$this->load->view('ip_address/_js');
+	}
+	public function ip_address_add_response(){
+		$ip_arra['ip'] = $_POST['IP'];
+		$ip_arra['added_by'] = $_SESSION['user_profile'][0]['id'];
+		$addIp = $this->Home_models->saverecords('ps_ip_allowed',$ip_arra);
+		$return_arr = array();
+		if($addIp > 0){
+			$return_arr[] = array("Type" => "Success","Error_type" => "department","msg"=>"Data Success Fully Inserted");
+		}else{
+			$return_arr[] = array("Type" => "Error","Error_type" => "department","msg"=>"Server Error");
+		}
+		echo json_encode($return_arr);
+    }
+	public function ip_address_edit($id = null){
+		$data['menu'] = $this->MenuModel->category_menu(1);
+		$filter['id'] = $id;
+		$data['ip_details'] = $this->Home_models->selectrecords('ps_ip_allowed',$filter);
+		$this->load->template('ip_address/edit',$data);
+		$this->load->view('ip_address/_js');
+	}
+	public function ip_address_edit_response(){
+		$id 		 	= $_POST['current_id'];
+		$ip 		 	= $_POST['IP'];
+		$data = array(
+			'ip' => $ip,
+		);
+		$this->db->where('id', $id);
+		$this->db->update('ps_ip_allowed', $data);
+		$return_arr[] = array("Type" => "Success","Error_type" => "User","msg"=>"Data Success Fully Updated");
+		echo json_encode($return_arr);
 	}
 	
 }

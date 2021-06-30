@@ -105,4 +105,10 @@ $route['order/edit/(:any)'] = 'home/order_edit/$1';
 
 
 
+$route['ip_address'] = 'home/ip_address';
+$route['ip_address/add'] = 'home/ip_address_add';
+$route['ip_address/edit/(:any)'] = 'home/ip_address_edit/$1';
+
+
+
 $route['logout'] = 'home/logout';

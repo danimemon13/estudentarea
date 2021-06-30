@@ -1,8 +1,7 @@
 <?php
 class Home_models extends CI_Model 
 {
-	function selectrecords($table,$column=0,$data=0,$orderby=0,$xlumn=0)
-	{   
+	function selectrecords($table,$column=0,$data=0,$orderby=0,$xlumn=0){
 	    $this->db->select("*");
         $this->db->from("$table");
         
@@ -62,9 +61,7 @@ class Home_models extends CI_Model
         $return_arr[] = array("Type" => "Success","Error_type" => "confirm_password_error","msg"=>"Data Updated");
 		echo json_encode($return_arr);
     }
-
-     function delete_globle($table,$id,$data)
-        {
+    function delete_globle($table,$id,$data){
         $this->db->where('id', $id);
         if($this->db->update($table,$data))
         {
@@ -74,8 +71,7 @@ class Home_models extends CI_Model
             return false;
         }
     }
-       function update_globl($table,$id,$data)
-        {
+    function update_globl($table,$id,$data){
         $this->db->where('id', $id);
         if($this->db->update($table,$data))
         {
