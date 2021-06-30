@@ -2,6 +2,7 @@
 $action = $_POST['action'];
 $inv_no = $_POST['inv_no'];
 $id = $_POST['id'];
+
 if($action == 'edit'){
     ?>
     <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
@@ -70,9 +71,71 @@ if($action == 'edit'){
 
     <?php
 }else if($action == 'delete'){
+        $this->db->select("
+        ps_invoice_basic.*,
+        ps_invoice_detail.service_id,
+        ps_services.name as service_name
+    ");
+    $this->db->from("ps_invoice_basic");
+    $this->db->join('ps_invoice_detail', 'ps_invoice_basic.id = ps_invoice_detail.invoice_id');
+    $this->db->join('ps_services', 'ps_invoice_detail.service_id = ps_services.id');
+    $this->db->where("ps_invoice_basic.id",$id);
+    $this->db->order_by("ps_invoice_basic.id","desc"); 
+    $queries = $this->db->get()->result();    
+    ?>
+    <table id="spndng_dtls" class="table table-striped table-hover table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Service Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php $num = 1;
+            foreach($queries as $query){?>
+            <tr>
+                <td><?=$num?></td>
+                <td><?=$query->service_name;?></td>
+                
+            </tr>
 
+            <?php $num++; };?>
+        </tbody>
+    </table>
+    <?php
 }else if($action == 'history'){
+    $this->db->select('
+    ps_invoice_history.*,
+    CONCAT(ps_user_profile.first_name,"-",ps_user_profile.last_name) as username 
+    ');
+    $this->db->from("ps_invoice_history");
+    $this->db->join('ps_user_profile', 'ps_user_profile.fk_parent_id = ps_invoice_history.user_id');
+    $this->db->where("invoice_id",$id);
+    $queries = $this->db->get()->result();
+    ?>
+    <table id="spndng_dtls" class="table table-striped table-hover table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User Name</th>
+                    <th>Action Perfomed</th>
+                    <th>Action At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $num = 1;
+                foreach($queries as $query){?>
+                <tr>
+                    <td><?=$num?></td>
+                    <td><?=$query->username;?></td>
+                    <td><?=$query->message;?></td>
+                    <td><?=$query->created_at;?></td>
+                </tr>
 
+                <?php $num++; };?>
+            </tbody>
+        </table>
+    <?php
 }else{
     echo "No Action Found";
 }

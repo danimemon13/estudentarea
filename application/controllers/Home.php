@@ -25,19 +25,46 @@ class Home extends CI_Controller {
 		$data['login'] = $this->Home_models->selectrecords('ps_user_login',$userArray);
 		$return_arr = array();
 		if(!empty($data['login'])){
-			//success
-			$return_arr[] = array("Type" => "Success","Error_type" => "login","msg"=>"User Is Available");
-			$fk_id = $data['login'][0]['id'];
-			$array = array('fk_parent_id'=>$fk_id);
-			$data['profile'] = $this->Home_models->selectrecords('ps_user_profile',$array);
-		
-			$this->session->set_userdata("user_basis",$data['login']);
-			$this->session->set_userdata("user_profile",$data['profile']);
-			$this->session->set_userdata("is_login","1");
-			
-			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
-			$message = $username." is Logged in";
-			$this->create_logs('Login Area',$message);
+			if($data['login'][0]['status'] == 0){
+				$return_arr[] = array("Type" => "Error","Error_type" => "login","msg"=>"Your Account Has Been Blocked By CRM Team");
+			}else{
+				//check ip ::1	
+				if($data['login'][0]['ip_allow'] == 0){
+					if(!$this->check_ip()){
+						$return_arr[] = array("Type" => "Error","Error_type" => "login","msg"=>"You Don't Have OutSide Access");
+					}
+					else{
+						//success
+						$return_arr[] = array("Type" => "Success","Error_type" => "login","msg"=>"User Is Available");
+						$fk_id = $data['login'][0]['id'];
+						$array = array('fk_parent_id'=>$fk_id);
+						$data['profile'] = $this->Home_models->selectrecords('ps_user_profile',$array);
+					
+						$this->session->set_userdata("user_basis",$data['login']);
+						$this->session->set_userdata("user_profile",$data['profile']);
+						$this->session->set_userdata("is_login","1");
+	
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Logged in";
+						$this->create_logs('Login Area',$message);
+					}
+				}
+				else{
+						//success
+						$return_arr[] = array("Type" => "Success","Error_type" => "login","msg"=>"User Is Available");
+						$fk_id = $data['login'][0]['id'];
+						$array = array('fk_parent_id'=>$fk_id);
+						$data['profile'] = $this->Home_models->selectrecords('ps_user_profile',$array);
+					
+						$this->session->set_userdata("user_basis",$data['login']);
+						$this->session->set_userdata("user_profile",$data['profile']);
+						$this->session->set_userdata("is_login","1");
+	
+						$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
+						$message = $username." is Logged in";
+						$this->create_logs('Login Area',$message);
+				}
+			}
 		}
 		else{
 			$return_arr[] = array("Type" => "Error","Error_type" => "login","msg"=>"Invalid User Name or Password");
@@ -149,6 +176,9 @@ class Home extends CI_Controller {
 	    echo $response;
 
     }
+
+
+	
     /************** Global Function ******************/
 	public function getallData(){
         $ID = $_POST["ID"];
@@ -201,7 +231,7 @@ class Home extends CI_Controller {
 		}
         // $this->load->view('email_form');
     }
-	public	function delete_response() {
+	public function delete_response() {
 		$id = $_POST['id'];
 		$table = $_POST['table'];
 		$columnName = $_POST['columnName'];
@@ -221,7 +251,13 @@ class Home extends CI_Controller {
 		}
 		echo json_encode($return_arr);
 	}
+	public function check_ip(){
+		$filter_ip['ip'] = $this->input->ip_address();
+		$get_rows = $this->Home_models->selectrecords('ps_ip_allowed',$filter_ip);
+		return count($get_rows) > 0 ? true : false;
+	}
 	
+
 
 	/************** Department ******************/
 	public function department(){
@@ -329,6 +365,8 @@ class Home extends CI_Controller {
 		echo json_encode($return_arr);
     }
 
+
+
 	/************** Team ******************/
 	public function team(){
 		$data['menu'] = $this->MenuModel->category_menu(1);
@@ -422,6 +460,11 @@ class Home extends CI_Controller {
 		echo json_encode($return_arr);
 	}
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 2701cb187c236c6640e053ce8a117db4e0eb3b53
 	/************** Role ******************/
 	public function role(){
 		$data['menu'] = $this->MenuModel->category_menu(1);
@@ -538,6 +581,8 @@ class Home extends CI_Controller {
 		echo json_encode($return_arr);
 	}
 
+
+
 	/************** User ******************/
 	public function user(){
 		$data['menu'] = $this->MenuModel->category_menu(1);
@@ -609,8 +654,12 @@ class Home extends CI_Controller {
 			$user_ip_status = $r->ip_allow == 0 ? 'danger' : 'success';
 			$user_ip_status_text = $r->ip_allow == 0 ? 'Inactive' : 'Active';
 			$ipAllow = '<span class="badge badge-'.$user_ip_status.' es-label " style="font-size : 13px">'.$user_ip_status_text.'</span>';
+
+			$id = '<button onclick="copyToClipboard(this.id)" id='.$r->id.' class="btn btn-primary btn-sm">ID</button>';
+
 			$data[] = array(
                 ++$count,
+				$id,
                 $username_r,
                 $username_s,
                 $r->user_role,
@@ -830,20 +879,41 @@ class Home extends CI_Controller {
 
 		$action = $_POST['action'];
 		$team_lead_id = $_POST['team_lead_id'];
-		
 		$get_current_team_lead_manger['fk_parent_id'] = $team_lead_id;
 		$get_manager = $this->Home_models->selectrecords('ps_user_profile',$get_current_team_lead_manger);
 		$manager_id = $get_manager[0]['manager'];
 		if($action == 'update_team_lead'){
 			$update_array = array('team_lead'=>$team_lead_id,'manager'=>$manager_id);
+			foreach($_POST['users'] as $user_id){
+				$create_user_ids = $user_id;
+				$this->db->where('fk_parent_id', $create_user_ids);
+				$this->db->update('ps_user_profile', $update_array);
+			}
+			$return_arr[] = array("Type" => "Success","Error_type" => "User","msg"=>"User Assigned");
+			echo json_encode($return_arr);
+			die();
 		}else if($action == 'update_manager'){
+
 			$update_array = array('manager'=>$_POST['team_lead_id']);
-		}
-		
-		foreach($_POST['users'] as $user_id){
-			$create_user_ids = $user_id;
-			$this->db->where('fk_parent_id', $create_user_ids);
-			$this->db->update('ps_user_profile', $update_array);
+
+			foreach($_POST['users'] as $team_lead_id){
+
+				$get_users['team_lead'] = $team_lead_id;
+				$team_lead_array = array('manager'=>$_POST['team_lead_id']);
+				$get_team_lead = $this->Home_models->selectrecords('ps_user_profile',$get_users);
+
+				foreach($get_team_lead as $user){
+					$create_inner_user_id = $user['fk_parent_id'];
+					$this->db->where('fk_parent_id', $create_inner_user_id);
+					$this->db->update('ps_user_profile', $team_lead_array);
+				}
+				
+
+				$create_user_ids = $team_lead_id;
+				$this->db->where('fk_parent_id', $create_user_ids);
+				$this->db->update('ps_user_profile', $update_array);
+			}
+
 		}
 			/*********************Logs*************************/
 			$username = $_SESSION['user_profile'][0]['first_name_real']."-".$_SESSION['user_profile'][0]['last_name_real'];
@@ -932,6 +1002,7 @@ class Home extends CI_Controller {
 		}
 		echo json_encode($return_arr);
 	}
+
 
 
 	/************** Leads ******************/
@@ -1258,6 +1329,12 @@ class Home extends CI_Controller {
 		}
 	}
 
+<<<<<<< HEAD
+=======
+
+
+	
+>>>>>>> 2701cb187c236c6640e053ce8a117db4e0eb3b53
 	/************** Websites ******************/
 	public function website(){
 		$data['menu'] = $this->MenuModel->category_menu(1);
@@ -1486,8 +1563,8 @@ class Home extends CI_Controller {
 		pt.id as team_id,
 		pt.name as team_name,
 		pup.id as user_id,
-		pup.first_name,
-		pup.last_name
+		Concat(pup.first_name,' - ',pup.last_name) as username
+		
 		");
 		$this->db->from("ps_invoice_basic as inv");
 		$this->db->join('ps_leads as ld', 'ld.id= inv.lead_id');
@@ -1519,7 +1596,7 @@ class Home extends CI_Controller {
 				$r->lead_code,
 				$r->created_at,
 				$r->amount."-".$r->currency,
-				$r->first_name,
+				$r->username,
 				$in_status,
 				$r->website,
 				$btn 
@@ -1732,9 +1809,13 @@ class Home extends CI_Controller {
 		$this->load->view('invoice/tab',$send_array);
 	}
 	public function invoice_action_response(){
+		$userid  = $_SESSION['user_profile'][0]['fk_parent_id'];
+		$username = $_SESSION['user_profile'][0]['first_name']." - ". $_SESSION['user_profile'][0]['last_name'];
+
 		$id= $_POST['inv_id'];
 		$amount['amount']  = $_POST['amount']."".$_POST['point_amount'];
 		$this->Home_models->update_globl('ps_invoice_basic',$id,$amount);
+<<<<<<< HEAD
 		/*********************Logs*************************/
 		$this->db->select("*");
 		$this->db->from("ps_invoice_basic");
@@ -1745,8 +1826,17 @@ class Home extends CI_Controller {
 		$message = $username." is Updated Amount On ".$inv_code;
 		$this->create_logs('Invoice Area',$message);
 		/*********************Logs End*************************/
+=======
+
+		$track['invoice_id']  = $id;
+		$track['user_id']  = $userid;
+		$track['message']  = $username. " Updated Amount ". $_POST['amount']."".$_POST['point_amount'];
+		$this->Home_models->saverecords('ps_invoice_history',$track);
+
+>>>>>>> 2701cb187c236c6640e053ce8a117db4e0eb3b53
 		echo '1';
 	}
+
 
 
 	/************** Orders ******************/

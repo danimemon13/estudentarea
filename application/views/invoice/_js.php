@@ -281,7 +281,7 @@ function edit_invoice(id,invoice_no){
             id: id,
             inv_no: invoice_no
         }
-    action('Edit Details', data, '', '')
+    action('Service Details', data, '', '')
   }
   function history_invoice(id,invoice_no){ 
     data = {
@@ -289,7 +289,7 @@ function edit_invoice(id,invoice_no){
             id: id,
             inv_no: invoice_no
         }
-    action('Edit Details', data, '', '')
+    action('History Details', data, '', '')
   }
   function action(header, data, btn, clicks) {
       var data = data;

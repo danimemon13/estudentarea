@@ -110,7 +110,10 @@ $('#dep-form-edit').submit(function(e){
                         }
                     })
                 } else {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2701cb187c236c6640e053ce8a117db4e0eb3b53
                     swal("Your imaginary file is safe!");
                 }
                 }); 
