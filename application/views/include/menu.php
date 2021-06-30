@@ -8,7 +8,7 @@
                     </li>
                     <li class="nav-item list-unstyled d-inline-block">
                       <div class="logo pr-2">
-                        <a href="<?=base_url()?>"><img src="<?=base_url()?>img/ps_logo.png" id="logo" alt="" class="img-fluid"></a>
+                        <a href="<?=base_url()?>"><img src="<?=base_url()?>img/logo-full-blue.png" id="logo" alt="" class="img-fluid"></a>
                       </div>
                     </li>
                 </ul>

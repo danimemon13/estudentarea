@@ -87,7 +87,7 @@ select:focus {
 .earning_box .icon1{ background: #11a1fd30; color: #11A1FD; } 
 .earning_box .icon2{ background: #6774DF30; color: #6774DF; } 
 .earning_box .icon3{ background: #F5A40330; color: #F5A403; }
-.card-header{ border-radius: 15px 15px 0 0 !important; background: linear-gradient(90deg, #2d73c1, #7aa6d8); }
+.card-header{ border-radius: 15px 15px 0 0 !important; background: linear-gradient(90deg, #0c7dd9, #4CC3FD); }
 .mrchnt_tble th{ font-weight: normal; }
 .stats span{font-size: 42px; }
 .stats .icon1{ color: #4CC3FD; }

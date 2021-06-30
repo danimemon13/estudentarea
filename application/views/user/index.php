@@ -74,20 +74,19 @@
                   <table id="data-table1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                          <th>#</th>
-                          <th>ID</th>
-                          <th>User Name</th>
-                          <th>User Name (Sudo)</th>
-                          <th>Role</th>
-                          <th>Team</th>
-                          <th>Department</th>
-                          <th>Employee Id</th>
-                          <th>Extension</th>  
-                          <th>Team Lead</th>  
-                          <th>Manger</th>  
-                          <th>Status</th>  
-                          <th>Outside Access</th>  
-                          <th>Action</th>
+                            <th>#</th>
+                            <th>User Name</th>
+                            <th>User Name (Sudo)</th>
+                            <th>Role</th>
+                            <th>Team</th>
+                            <th>Department</th>
+                            <th>Employee Id</th>
+                            <th>Extension</th>  
+                            <th>Team Lead</th>  
+                            <th>Manger</th>  
+                            <th>Status</th>  
+                            <th>Outside Access</th>  
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody></tbody>                               
