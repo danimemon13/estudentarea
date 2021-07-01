@@ -2318,5 +2318,89 @@ class Home extends CI_Controller {
 		$return_arr[] = array("Type" => "Success","Error_type" => "User","msg"=>"Data Success Fully Updated");
 		echo json_encode($return_arr);
 	}
+
+	///*******/////
+	public function permissions(){
+		$data['menu'] = $this->MenuModel->category_menu(1);
+		$data['department'] = $this->Home_models->selectrecords('ps_department');
+		$this->load->template('permissions/index',$data);
+		$this->load->view('permissions/_js');
+	}
+	public function getPermissions(){
+
+    //print_r($_POST);
+    $role_id = $_POST["role_id"];
+    $departmentDiv = $_POST['departmentDiv'];
+    $array = array('ps_menu_access.role_id'=>$role_id,'ps_menu_access.depart_id'=>$departmentDiv);
+    $this->db->select('ps_menu_access.menu_id,ps_menu.name,ps_menu.add_access,ps_menu.edit_access,ps_menu.delete_access,ps_menu.view_access');
+    $this->db->from('ps_menu_access');
+    $this->db->join('ps_menu', 'ps_menu.id = ps_menu_access.menu_id');
+    $this->db->where($array);
+    //$this->db->join('et_city', 'et_city.id = et_broker.city_id');
+    $query = $this->db->get();
+    ?>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Permission Name</th>
+          <th>Add Permission</th>
+          <th>Edit Permission</th>
+          <th>Delete Permission</th>
+          <th>View Permission</th>
+        </tr>
+      </thead>
+    <?php
+    foreach($query->result() as $r) {
+    ?>
+    
+      <tr>
+        <td>
+          <div class="checkbox-fade fade-in-primary">
+            <input type="checkbox" value="1" name="<?=$r->menu_id?>[all_acccess]" onClick="check_all(this.id)" id="<?=$r->menu_id?>" class="option-input checkbox">
+          </div>
+        </td>
+        <td><?=$r->name?></td>
+        <td>
+          <div class="checkbox-fade fade-in-primary" <?php if($r->add_access==1){}else{
+            echo "style='display:none';";
+          }?>>
+            <input type="checkbox" value="1" name="<?=$r->menu_id?>[add_access]" onClick="check_all(this.id)" id="add_access_<?=$r->menu_id?>" class="option-input checkbox">
+          </div>
+        </td>
+        <td>
+          <div class="checkbox-fade fade-in-primary" <?php if($r->edit_access==1){}else{
+            echo "style='display:none';";
+          }?>>
+            <input type="checkbox" value="1" name="<?=$r->menu_id?>[edit_access]" onClick="check_all(this.id)" id="edit_access_<?=$r->menu_id?>" class="option-input checkbox">
+          </div>
+        </td>
+        <td>
+          <div class="checkbox-fade fade-in-primary" <?php if($r->delete_access==1){}else{
+            echo "style='display:none';";
+          }?>>
+            <input type="checkbox" value="1" name="<?=$r->menu_id?>[delete_access]" onClick="check_all(this.id)" id="delete_access_<?=$r->menu_id?>" class="option-input checkbox">
+          </div>
+        </td>
+        <td>
+          <div class="checkbox-fade fade-in-primary" <?php if($r->view_access==1){}else{
+            echo "style='display:none';";
+          }?>>
+            <input type="checkbox" value="1" name="<?=$r->menu_id?>[view_access]" onClick="check_all(this.id)" id="view_access_<?=$r->menu_id?>" class="option-input checkbox">
+          </div>
+        </td>
+      </tr>
+    
+    <?php
+    }?>
+    <tr>
+      <td colspan="6" style="text-align: end;">
+        <button class="btn btn-primary btn-round" type="submit">Save</button>
+      </td>
+    </tr>
+    </table>
+    <?php
+  }
+
 	
 }

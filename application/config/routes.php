@@ -109,6 +109,6 @@ $route['ip_address'] = 'home/ip_address';
 $route['ip_address/add'] = 'home/ip_address_add';
 $route['ip_address/edit/(:any)'] = 'home/ip_address_edit/$1';
 
-
+$route['permissions'] = 'home/permissions';
 
 $route['logout'] = 'home/logout';

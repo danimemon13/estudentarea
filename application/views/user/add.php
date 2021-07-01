@@ -80,12 +80,15 @@ form#user-form button {
   <div class="container-fluid">
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-md-12">
-          <div class="card shadow-sm border-0 mb-4 innr_pge_card mt-3">
-            <div class="card-header border-0 text-white pt-3 pb-3">
-              <h5 class="text-uppercase font-weight-bold">Add New User</h5>
-            </div>
-            <div class="card-body">
-              <form id="user-form">
+          <form id="user-form">
+            <div class="card shadow-sm border-0 mb-4 innr_pge_card mt-3">
+              <div class="card-header border-0 text-white pt-3 pb-3">
+                <h5 class="text-uppercase font-weight-bold">Add New User</h5>
+              </div>
+              <div class="card-header border-0 text-white pt-3 pb-3 remove-sider">
+                <h5 class="text-uppercase font-weight-bold">User Basic Details</h5>
+              </div>
+              <div class="card-body">
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                         <div class="form-group">
@@ -94,20 +97,20 @@ form#user-form button {
                       </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                    <div class="form-group">
-                      <label>Password</label>
-                      <input type="password" name="password" class="form-control shadow-sm p-3" placeholder="Password" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                        <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="first_name" class="form-control shadow-sm p-3" placeholder="First Name" required>
+                      <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control shadow-sm p-3" placeholder="Password" required>
                       </div>
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                </div>
+                <div class="row">
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label>First Name</label>
+                      <input type="text" name="first_name" class="form-control shadow-sm p-3" placeholder="First Name" required>
+                    </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                     <div class="form-group">
                       <label>Last Name</label>
                       <input type="text" name="last_name" class="form-control shadow-sm p-3" placeholder="Last Name" required>
@@ -115,42 +118,49 @@ form#user-form button {
                   </div>
                 </div>
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                        <div class="form-group">
-                        <label>First Name (Real)</label>
-                        <input type="text" name="first_name_real" class="form-control shadow-sm p-3" placeholder="First Name (Real)" required>
-                      </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                       <div class="form-group">
-                        <label>Last Name (Real)</label>
-                        <input type="text" name="last_name_real" class="form-control shadow-sm p-3" placeholder="Last Name (Real)" required>
-                      </div>
+                      <label>First Name (Real)</label>
+                      <input type="text" name="first_name_real" class="form-control shadow-sm p-3" placeholder="First Name (Real)" required>
+                    </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label>Last Name (Real)</label>
+                      <input type="text" name="last_name_real" class="form-control shadow-sm p-3" placeholder="Last Name (Real)" required>
+                    </div>
                   </div>
                 </div>
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                        <div class="form-group">
-                        <label>Employee Id</label>
-                        <input type="text" name="employee_id" class="form-control shadow-sm p-3" placeholder="Employee Id" required>
-                      </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                       <div class="form-group">
-                        <label>Extension</label>
-                        <input type="text" name="extension" class="form-control shadow-sm p-3" placeholder="Extension" required>
-                      </div>
+                      <label>Employee Id</label>
+                      <input type="text" name="employee_id" class="form-control shadow-sm p-3" placeholder="Employee Id" required>
                     </div>
                   </div>
+                  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label>Extension</label>
+                      <input type="text" name="extension" class="form-control shadow-sm p-3" placeholder="Extension" required>
+                    </div>
+                  </div>
+                  </div>
                   <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                      <label>Allow Ip</label>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12" style="display: flex;align-items: center;">
+                      <label style="padding: 2px 7px;">Allow IP</label>
                           <input type="checkbox" id="allow_ip" name="allow_ip" class="option-input checkbox">
-                      <label>Status</label>
+                      <label style="padding: 2px 7px;">Status</label>
                           <input type="checkbox" id="status" name="status" class="option-input checkbox">
                     </div>
                   </div>
-                  <div class="row">
+              </div>
+            </div>
+            <div class="card shadow-sm border-0 mb-4 innr_pge_card mt-3">
+              <div class="card-header border-0 text-white pt-3 pb-3">
+                <h5 class="text-uppercase font-weight-bold">User Advance Details</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                       <div class="form-group">
                         <label>Select Team</label>
@@ -207,10 +217,10 @@ form#user-form button {
                         <button type="submit" name="add_team" class="w-100 btn btn-primary shadow-sm p-3">Add User</button >
                     </div>
                   </div>
-                </div>          
-              </form>
+                </div> 
+              </div>
             </div>
-          </div>
+          </form>
         </div>
     </div>
   </div>

@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2021 at 06:17 PM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 7.4.14
+-- Generation Time: Jul 01, 2021 at 11:22 PM
+-- Server version: 10.4.6-MariaDB
+-- PHP Version: 7.3.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -63,9 +64,10 @@ CREATE TABLE `ps_department` (
 --
 
 INSERT INTO `ps_department` (`id`, `name`, `fk_team_id`, `status`) VALUES
-(1, 'Sales', '2', '1'),
-(2, 'Support', '2', '1'),
-(3, 'CRM', '1', '0');
+(1, 'CRM', '2', '1'),
+(2, 'Admin', '2', '1'),
+(3, 'Sales', '1', '1'),
+(4, 'Support', '1', '1');
 
 -- --------------------------------------------------------
 
@@ -601,7 +603,8 @@ INSERT INTO `ps_logs` (`id`, `user_id`, `area`, `action`, `ip`, `perform_at`) VA
 (67, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-06-30 01:38:32'),
 (68, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-06-30 01:38:53'),
 (69, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-06-30 17:31:14'),
-(70, '1', 'Team Area', 'Dani-Dani is Updated From Team B to Team C', '::1', '2021-06-30 21:15:28');
+(70, '1', 'Team Area', 'Dani-Dani is Updated From Team B to Team C', '::1', '2021-06-30 21:15:28'),
+(71, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-07-02 00:00:44');
 
 -- --------------------------------------------------------
 
@@ -635,28 +638,17 @@ INSERT INTO `ps_menu` (`id`, `name`, `link`, `icon`, `parent`, `is_child`, `add_
 (6, 'Orders', 'leads', 'img/orders.png', 0, 0, 1, 1, 1, 1),
 (7, 'Reportings', 'leads', 'img/reporting.png', 0, 0, 1, 1, 1, 1),
 (8, 'Settings', 'leads', 'img/order-compliance.png', 0, 0, 1, 1, 1, 1),
-(9, 'Teams', 'team', 'img/order-compliance.png', 0, 0, 1, 1, 1, 1),
-(10, 'Show All Leads', 'leads', '', 3, 0, 1, 1, 1, 1),
-(11, 'Add New Leads', 'leads/add', '', 3, 0, 1, 1, 1, 1),
-(12, 'Show All Invoice', 'invoice', '', 4, 0, 1, 1, 1, 1),
-(13, 'Add New Invoice', 'invoice/add', '', 4, 0, 1, 1, 1, 1),
-(14, 'Websites', 'website', 'img/websites.png', 0, 0, 1, 1, 1, 1),
-(15, 'Show All Websites', 'website', '', 14, 0, 1, 1, 1, 1),
-(16, 'Add New Website', 'website/add', '', 14, 0, 1, 1, 1, 1),
-(17, 'Show All Team', 'team', '', 9, 0, 1, 1, 1, 1),
-(18, 'Add New Team', 'team/add', '', 9, 0, 1, 1, 1, 1),
-(19, 'Departments', 'department', 'img/order.png', 0, 0, 1, 1, 1, 1),
-(20, 'Show All Department', 'department', '', 19, 0, 1, 1, 1, 1),
-(21, 'Add New Department', 'department/add', '', 19, 0, 1, 1, 1, 1),
-(22, 'Roles', 'role', 'img/orders.png', 0, 0, 1, 1, 1, 1),
-(23, 'Show All Roles', 'role', 'img/orders.png', 22, 0, 1, 1, 1, 1),
-(24, 'Add New Roles', 'role/add', 'img/orders.png', 22, 0, 1, 1, 1, 1),
-(25, 'Users', 'user', 'img/orders.png', 0, 0, 1, 1, 1, 1),
-(26, 'Show All Users', 'user', '', 25, 0, 1, 1, 1, 1),
-(27, 'Add New Users', 'user/add', '', 25, 0, 1, 1, 1, 1),
-(37, 'Show All Orders', 'order', '', 6, 0, 1, 1, 1, 1),
-(38, 'IP Address', 'ip_address', 'img/ip-address.png', 0, 0, 1, 1, 1, 1),
-(39, 'Show All IP Address', 'ip_address', '', 38, 0, 1, 1, 1, 1);
+(9, 'Show All Leads', 'leads', 'img/leads.png', 3, 0, 1, 1, 1, 1),
+(10, 'Show Invoices', 'leads', 'img/invoice.png', 4, 0, 1, 1, 1, 1),
+(11, 'Show Payments', 'leads', 'img/invoice.png', 5, 0, 1, 1, 1, 1),
+(12, 'Show Orders', 'leads', 'img/invoice.png', 6, 0, 1, 1, 1, 1),
+(13, 'Show Teams', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(14, 'Show Roles', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(15, 'Show Departments', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(16, 'Show Users', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(17, 'Show Websites', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(18, 'Show IP\'s', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(19, 'Show Permission', 'permissions', 'img/invoice.png', 8, 0, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -667,6 +659,7 @@ INSERT INTO `ps_menu` (`id`, `name`, `link`, `icon`, `parent`, `is_child`, `add_
 CREATE TABLE `ps_menu_access` (
   `id` int(11) NOT NULL,
   `role_id` int(11) NOT NULL,
+  `depart_id` int(11) NOT NULL,
   `menu_id` int(11) NOT NULL,
   `add_acces` int(11) NOT NULL,
   `edit_access` int(11) NOT NULL,
@@ -678,73 +671,26 @@ CREATE TABLE `ps_menu_access` (
 -- Dumping data for table `ps_menu_access`
 --
 
-INSERT INTO `ps_menu_access` (`id`, `role_id`, `menu_id`, `add_acces`, `edit_access`, `delete_access`, `view_access`) VALUES
-(1, 1, 1, 0, 0, 0, 1),
-(2, 1, 2, 0, 0, 0, 1),
-(3, 1, 3, 0, 0, 0, 1),
-(4, 1, 4, 0, 0, 0, 1),
-(5, 1, 5, 0, 0, 0, 1),
-(6, 1, 6, 0, 0, 0, 1),
-(7, 1, 7, 0, 0, 0, 1),
-(8, 1, 8, 0, 0, 0, 1),
-(9, 1, 9, 0, 0, 0, 1),
-(10, 2, 1, 0, 0, 0, 0),
-(11, 2, 2, 0, 0, 0, 0),
-(12, 2, 3, 0, 0, 0, 0),
-(13, 2, 4, 0, 0, 0, 0),
-(14, 2, 5, 0, 0, 0, 0),
-(15, 2, 6, 0, 0, 0, 0),
-(16, 2, 7, 0, 0, 0, 0),
-(17, 2, 8, 0, 0, 0, 0),
-(18, 2, 9, 0, 0, 0, 0),
-(19, 3, 1, 0, 0, 0, 0),
-(20, 3, 2, 0, 0, 0, 0),
-(21, 3, 3, 0, 0, 0, 0),
-(22, 3, 4, 0, 0, 0, 0),
-(23, 3, 5, 0, 0, 0, 0),
-(24, 3, 6, 0, 0, 0, 0),
-(25, 3, 7, 0, 0, 0, 0),
-(26, 3, 8, 0, 0, 0, 0),
-(27, 3, 9, 0, 0, 0, 0),
-(28, 4, 1, 0, 0, 0, 0),
-(29, 4, 2, 0, 0, 0, 0),
-(30, 4, 3, 0, 0, 0, 0),
-(31, 4, 4, 0, 0, 0, 0),
-(32, 4, 5, 0, 0, 0, 0),
-(33, 4, 6, 0, 0, 0, 0),
-(34, 4, 7, 0, 0, 0, 0),
-(35, 4, 8, 0, 0, 0, 0),
-(36, 4, 9, 0, 0, 0, 0),
-(37, 5, 1, 0, 0, 0, 0),
-(38, 5, 2, 0, 0, 0, 0),
-(39, 5, 3, 0, 0, 0, 0),
-(40, 5, 4, 0, 0, 0, 0),
-(41, 5, 5, 0, 0, 0, 0),
-(42, 5, 6, 0, 0, 0, 0),
-(43, 5, 7, 0, 0, 0, 0),
-(44, 5, 8, 0, 0, 0, 0),
-(45, 5, 9, 0, 0, 0, 0),
-(46, 1, 10, 0, 0, 0, 1),
-(47, 1, 11, 0, 0, 0, 1),
-(49, 1, 17, 0, 0, 0, 1),
-(50, 1, 18, 0, 0, 0, 1),
-(51, 1, 12, 0, 0, 0, 1),
-(52, 1, 13, 0, 0, 0, 1),
-(53, 1, 14, 0, 0, 0, 1),
-(54, 1, 15, 0, 0, 0, 1),
-(55, 1, 16, 0, 0, 0, 1),
-(56, 1, 25, 0, 0, 0, 1),
-(57, 1, 26, 0, 0, 0, 1),
-(58, 1, 27, 0, 0, 0, 1),
-(59, 1, 22, 0, 0, 0, 1),
-(60, 1, 23, 0, 0, 0, 1),
-(61, 1, 24, 0, 0, 0, 1),
-(62, 1, 19, 0, 0, 0, 1),
-(63, 1, 20, 0, 0, 0, 1),
-(64, 1, 21, 0, 0, 0, 1),
-(65, 1, 37, 0, 0, 0, 1),
-(66, 1, 38, 0, 0, 0, 1),
-(67, 1, 39, 0, 0, 0, 1);
+INSERT INTO `ps_menu_access` (`id`, `role_id`, `depart_id`, `menu_id`, `add_acces`, `edit_access`, `delete_access`, `view_access`) VALUES
+(1, 1, 1, 1, 1, 1, 1, 1),
+(2, 1, 1, 2, 1, 1, 1, 1),
+(3, 1, 1, 3, 1, 1, 1, 1),
+(4, 1, 1, 4, 1, 1, 1, 1),
+(5, 1, 1, 5, 1, 1, 1, 1),
+(6, 1, 1, 6, 1, 1, 1, 1),
+(7, 1, 1, 7, 1, 1, 1, 1),
+(8, 1, 1, 8, 1, 1, 1, 1),
+(9, 1, 1, 9, 1, 1, 1, 1),
+(10, 1, 1, 10, 1, 1, 1, 1),
+(11, 1, 1, 11, 1, 1, 1, 1),
+(12, 1, 1, 12, 1, 1, 1, 1),
+(13, 1, 1, 13, 1, 1, 1, 1),
+(14, 1, 1, 14, 1, 1, 1, 1),
+(15, 1, 1, 15, 1, 1, 1, 1),
+(16, 1, 1, 16, 1, 1, 1, 1),
+(17, 1, 1, 17, 1, 1, 1, 1),
+(18, 1, 1, 18, 1, 1, 1, 1),
+(19, 1, 1, 19, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -887,8 +833,8 @@ CREATE TABLE `ps_role` (
 --
 
 INSERT INTO `ps_role` (`id`, `name`, `status`, `depart_id`) VALUES
-(1, 'Manager', '1', '2'),
-(2, 'Team Lead', '1', '2'),
+(1, 'Manager', '1', '1'),
+(2, 'Team Lead', '1', '1'),
 (3, 'Executive', '1', '1');
 
 -- --------------------------------------------------------
@@ -1224,7 +1170,7 @@ ALTER TABLE `ps_customers`
 -- AUTO_INCREMENT for table `ps_department`
 --
 ALTER TABLE `ps_department`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `ps_invoice_basic`
@@ -1272,19 +1218,19 @@ ALTER TABLE `ps_leads_status`
 -- AUTO_INCREMENT for table `ps_logs`
 --
 ALTER TABLE `ps_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `ps_menu`
 --
 ALTER TABLE `ps_menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `ps_menu_access`
 --
 ALTER TABLE `ps_menu_access`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `ps_order_child`

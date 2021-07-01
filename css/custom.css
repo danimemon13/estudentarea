@@ -1,3 +1,7 @@
+.remove-sider {
+    border-radius: 0 !important;
+    border-top: #1d1c1c 2px solid !important;
+}
 .notify {
     position: absolute;
     font-size: 12px;
