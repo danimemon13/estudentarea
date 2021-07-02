@@ -1,4 +1,16 @@
 <script>
+	$("#destination_form").submit(function(e){
+		e.preventDefault();
+		var form_data = $("#destination_form").serializeArray();
+		$.ajax({
+			type:'post',
+			data:form_data,
+			url: "<?=base_url()?>home/permission_proces",
+			success:function(response){
+                console.log(response);
+            }
+		});
+	});
 	function get_role(id){
 		var value = value;
         $.ajax({//getDetilsById
@@ -42,5 +54,35 @@
                 
             }
         });
+	}
+	function check_all(id){
+		var add_access = $('#add_access_'+id);
+		var edit_access = $('#edit_access_'+id);
+		var delete_access = $('#delete_access_'+id);
+		var view_access = $('#view_access_'+id);
+	    if(add_access.prop("checked") == true){
+	    	add_access.removeAttr('checked');
+	    }
+	    else{
+	    	add_access.attr('checked','checked');
+	    }
+	    if(edit_access.prop("checked") == true){
+	    	edit_access.removeAttr('checked');
+	    }
+	    else{
+	    	edit_access.attr('checked','checked');
+	    }
+	    if(delete_access.prop("checked") == true){
+	    	delete_access.removeAttr('checked');
+	    }
+	    else{
+	    	delete_access.attr('checked','checked');
+	    }
+	    if(view_access.prop("checked") == true){
+	    	view_access.removeAttr('checked');
+	    }
+	    else{
+	    	view_access.attr('checked','checked');
+	    }
 	}
 </script>

@@ -2357,7 +2357,7 @@ class Home extends CI_Controller {
       <tr>
         <td>
           <div class="checkbox-fade fade-in-primary">
-            <input type="checkbox" value="1" name="<?=$r->menu_id?>[all_acccess]" onClick="check_all(this.id)" id="<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" <?php if($r->add_access==1 && $r->edit_access==1 && $r->delete_access==1 && $r->view_access==1){echo "checked";}?> value="1" name="<?=$r->menu_id?>[all_acccess]" onClick="check_all(this.id)" id="<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td><?=$r->name?></td>
@@ -2365,28 +2365,28 @@ class Home extends CI_Controller {
           <div class="checkbox-fade fade-in-primary" <?php if($r->add_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" value="1" name="<?=$r->menu_id?>[add_access]" onClick="check_all(this.id)" id="add_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" <?php if($r->add_access==1){echo "checked";}?> value="1" name="<?=$r->menu_id?>[add_access]" id="add_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td>
           <div class="checkbox-fade fade-in-primary" <?php if($r->edit_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" value="1" name="<?=$r->menu_id?>[edit_access]" onClick="check_all(this.id)" id="edit_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" value="1" <?php if($r->edit_access==1){echo "checked";}?> name="<?=$r->menu_id?>[edit_access]" id="edit_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td>
           <div class="checkbox-fade fade-in-primary" <?php if($r->delete_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" value="1" name="<?=$r->menu_id?>[delete_access]" onClick="check_all(this.id)" id="delete_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" value="1" <?php if($r->delete_access==1){echo "checked";}?> name="<?=$r->menu_id?>[delete_access]" id="delete_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td>
           <div class="checkbox-fade fade-in-primary" <?php if($r->view_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" value="1" name="<?=$r->menu_id?>[view_access]" onClick="check_all(this.id)" id="view_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" value="1" <?php if($r->view_access==1){echo "checked";}?> name="<?=$r->menu_id?>[view_access]" id="view_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
       </tr>
@@ -2401,6 +2401,8 @@ class Home extends CI_Controller {
     </table>
     <?php
   }
-
+  public function permission_proces(){
+  	print_r($_POST);
+  }
 	
 }
