@@ -51,38 +51,27 @@
 
                 //$("#city").empty();
                 $("#destination_form").html(response);
-                
+                var role_id = '<input type="text" value="'+id+'" name="role_id" style="display:none"/>';
+                var depart_id = '<input type="text" value="'+departmentDiv+'" name="depart_id" style="display:none"/>';
+                $("#destination_form").append(role_id);
+                $("#destination_form").append(depart_id);
             }
         });
 	}
 	function check_all(id){
-		var add_access = $('#add_access_'+id);
-		var edit_access = $('#edit_access_'+id);
-		var delete_access = $('#delete_access_'+id);
-		var view_access = $('#view_access_'+id);
-	    if(add_access.prop("checked") == true){
-	    	add_access.removeAttr('checked');
-	    }
-	    else{
-	    	add_access.attr('checked','checked');
-	    }
-	    if(edit_access.prop("checked") == true){
-	    	edit_access.removeAttr('checked');
-	    }
-	    else{
-	    	edit_access.attr('checked','checked');
-	    }
-	    if(delete_access.prop("checked") == true){
-	    	delete_access.removeAttr('checked');
-	    }
-	    else{
-	    	delete_access.attr('checked','checked');
-	    }
-	    if(view_access.prop("checked") == true){
-	    	view_access.removeAttr('checked');
-	    }
-	    else{
-	    	view_access.attr('checked','checked');
-	    }
+		var id = id;
+        if ($("#"+id).is(":checked")) {
+            $( "#add_access_"+id ).prop( "checked", true );
+            $( "#edit_access_"+id ).prop( "checked", true );
+            $( "#delete_access_"+id ).prop( "checked", true );
+            $( "#view_access_"+id ).prop( "checked", true );
+        }
+        else{
+            $( "#add_access_"+id ).prop( "checked", false );
+            $( "#edit_access_"+id ).prop( "checked", false );
+            $( "#delete_access_"+id ).prop( "checked", false );
+            $( "#view_access_"+id ).prop( "checked", false );
+        }
 	}
+	
 </script>

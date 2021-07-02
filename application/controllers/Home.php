@@ -2332,7 +2332,7 @@ class Home extends CI_Controller {
     $role_id = $_POST["role_id"];
     $departmentDiv = $_POST['departmentDiv'];
     $array = array('ps_menu_access.role_id'=>$role_id,'ps_menu_access.depart_id'=>$departmentDiv);
-    $this->db->select('ps_menu_access.menu_id,ps_menu.name,ps_menu.add_access,ps_menu.edit_access,ps_menu.delete_access,ps_menu.view_access');
+    $this->db->select('ps_menu_access.menu_id,ps_menu.name,ps_menu.add_access,ps_menu.edit_access,ps_menu.delete_access,ps_menu.view_access,ps_menu_access.add_acces as menu_add_access,ps_menu_access.edit_access as menu_edit_access,ps_menu_access.delete_access as menu_delete_access,ps_menu_access.view_access as menu_view_access');
     $this->db->from('ps_menu_access');
     $this->db->join('ps_menu', 'ps_menu.id = ps_menu_access.menu_id');
     $this->db->where($array);
@@ -2357,7 +2357,7 @@ class Home extends CI_Controller {
       <tr>
         <td>
           <div class="checkbox-fade fade-in-primary">
-            <input type="checkbox" <?php if($r->add_access==1 && $r->edit_access==1 && $r->delete_access==1 && $r->view_access==1){echo "checked";}?> value="1" name="<?=$r->menu_id?>[all_acccess]" onClick="check_all(this.id)" id="<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" <?php if($r->menu_add_access==1 && $r->menu_edit_access==1 && $r->menu_delete_access==1 && $r->menu_view_access==1){echo "checked";}?> value="1" name="<?=$r->menu_id?>[all_acccess]" onClick="check_all(this.id)" id="<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td><?=$r->name?></td>
@@ -2365,28 +2365,28 @@ class Home extends CI_Controller {
           <div class="checkbox-fade fade-in-primary" <?php if($r->add_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" <?php if($r->add_access==1){echo "checked";}?> value="1" name="<?=$r->menu_id?>[add_access]" id="add_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" <?php if($r->menu_add_access==1){echo "checked";}?> value="1" name="<?=$r->menu_id?>[add_access]" id="add_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td>
           <div class="checkbox-fade fade-in-primary" <?php if($r->edit_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" value="1" <?php if($r->edit_access==1){echo "checked";}?> name="<?=$r->menu_id?>[edit_access]" id="edit_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" value="1" <?php if($r->menu_edit_access==1){echo "checked";}?> name="<?=$r->menu_id?>[edit_access]" id="edit_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td>
           <div class="checkbox-fade fade-in-primary" <?php if($r->delete_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" value="1" <?php if($r->delete_access==1){echo "checked";}?> name="<?=$r->menu_id?>[delete_access]" id="delete_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" value="1" <?php if($r->menu_delete_access==1){echo "checked";}?> name="<?=$r->menu_id?>[delete_access]" id="delete_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
         <td>
           <div class="checkbox-fade fade-in-primary" <?php if($r->view_access==1){}else{
             echo "style='display:none';";
           }?>>
-            <input type="checkbox" value="1" <?php if($r->view_access==1){echo "checked";}?> name="<?=$r->menu_id?>[view_access]" id="view_access_<?=$r->menu_id?>" class="option-input checkbox">
+            <input type="checkbox" value="1" <?php if($r->menu_view_access==1){echo "checked";}?> name="<?=$r->menu_id?>[view_access]" id="view_access_<?=$r->menu_id?>" class="option-input checkbox">
           </div>
         </td>
       </tr>
@@ -2402,7 +2402,42 @@ class Home extends CI_Controller {
     <?php
   }
   public function permission_proces(){
-  	print_r($_POST);
+  	//print_r($_POST);
+  	foreach($_POST as $key=>$value){
+  		$add_access  	= 0;
+  		$edit_access 	= 0;
+  		$delete_access 	= 0;
+  		$view_access 	= 0;
+  		$role_id 		= $this->input->post('role_id');
+  		$depart_id 		= $this->input->post('depart_id');
+  		if(isset($_POST[$key]['add_access'])){
+  			$add_access = 1;
+  		}
+  		if(isset($_POST[$key]['edit_access'])){
+  			$edit_access = 1;
+  		}
+  		if(isset($_POST[$key]['delete_access'])){
+  			$delete_access = 1;
+  		}
+  		if(isset($_POST[$key]['view_access'])){
+  			$view_access = 1;
+  		}
+  		$array = array(
+  			'add_acces'	=>$add_access,
+  			'edit_access'	=>$edit_access,
+  			'delete_access'	=>$delete_access,
+  			'view_access'	=>$view_access
+  		);
+  		$where_array = array(
+  			"role_id"=>$role_id,
+  			"depart_id"=>$depart_id,
+  			"menu_id"=>$key
+  		);
+  		$this->db->set($array);
+        $this->db->where($where_array);
+        $this->db->update('ps_menu_access', $array);
+        echo $this->db->last_query();
+  	}
   }
 	
 }

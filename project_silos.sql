@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2021 at 11:22 PM
+-- Generation Time: Jul 02, 2021 at 08:43 PM
 -- Server version: 10.4.6-MariaDB
 -- PHP Version: 7.3.8
 
@@ -604,7 +604,8 @@ INSERT INTO `ps_logs` (`id`, `user_id`, `area`, `action`, `ip`, `perform_at`) VA
 (68, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-06-30 01:38:53'),
 (69, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-06-30 17:31:14'),
 (70, '1', 'Team Area', 'Dani-Dani is Updated From Team B to Team C', '::1', '2021-06-30 21:15:28'),
-(71, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-07-02 00:00:44');
+(71, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-07-02 00:00:44'),
+(72, '1', 'Login Area', 'Dani-Dani is Logged in', '::1', '2021-07-02 19:07:48');
 
 -- --------------------------------------------------------
 
@@ -639,15 +640,15 @@ INSERT INTO `ps_menu` (`id`, `name`, `link`, `icon`, `parent`, `is_child`, `add_
 (7, 'Reportings', 'leads', 'img/reporting.png', 0, 0, 1, 1, 1, 1),
 (8, 'Settings', 'leads', 'img/order-compliance.png', 0, 0, 1, 1, 1, 1),
 (9, 'Show All Leads', 'leads', 'img/leads.png', 3, 0, 1, 1, 1, 1),
-(10, 'Show Invoices', 'leads', 'img/invoice.png', 4, 0, 1, 1, 1, 1),
+(10, 'Show Invoices', 'invoice', 'img/invoice.png', 4, 0, 1, 1, 1, 1),
 (11, 'Show Payments', 'leads', 'img/invoice.png', 5, 0, 1, 1, 1, 1),
-(12, 'Show Orders', 'leads', 'img/invoice.png', 6, 0, 1, 1, 1, 1),
-(13, 'Show Teams', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
-(14, 'Show Roles', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
-(15, 'Show Departments', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
-(16, 'Show Users', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
-(17, 'Show Websites', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
-(18, 'Show IP\'s', 'leads', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(12, 'Show Orders', 'order', 'img/invoice.png', 6, 0, 1, 1, 1, 1),
+(13, 'Show Teams', 'team', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(14, 'Show Roles', 'role', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(15, 'Show Departments', 'department', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(16, 'Show Users', 'user', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(17, 'Show Websites', 'website', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
+(18, 'Show IP\'s', 'ip_address', 'img/invoice.png', 8, 0, 1, 1, 1, 1),
 (19, 'Show Permission', 'permissions', 'img/invoice.png', 8, 0, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
@@ -1218,7 +1219,7 @@ ALTER TABLE `ps_leads_status`
 -- AUTO_INCREMENT for table `ps_logs`
 --
 ALTER TABLE `ps_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `ps_menu`
